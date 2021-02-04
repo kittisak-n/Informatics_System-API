@@ -3,6 +3,10 @@ const bodyParser = require('body-parser');
 
 const MpsRouters = require('./routes/MpsRouters/user');
 
+
+
+const WlsRouters = require('./routes/WlsRouters/criteria');
+
 var app = express();
 
 app.use(bodyParser.json());
@@ -16,6 +20,6 @@ app.use(function(req, res, next) {
 })
 
 app.use('/MpsRouters', MpsRouters);
-
+app.use('/WlsTouters', WlsRouters);
 
 app.listen(8080, console.log("API RUNNING PORT 8080"));
