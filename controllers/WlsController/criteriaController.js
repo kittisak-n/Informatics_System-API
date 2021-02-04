@@ -15,7 +15,7 @@ exports.Add_criteria = (req, res) => {
         "nmp_minimum: " +req.body.nmp_minimum+"\n",
         "nmp_maximum: "+req.body.nmp_maximum+"\n",
         )
-// วิชาใน
+// วิชาใน.
 
         console.log("========================== วิชาใน ========================== \n")
         console.log(req.body.criteria_Internal)
