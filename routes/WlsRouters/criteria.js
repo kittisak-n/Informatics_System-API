@@ -24,9 +24,16 @@ router.post("/Add_criteria", criteria.Add_criteria, (req,res) => {
     res.send(res)
 });
 
-router.post("/Get_criteria", criteria.Get_criteria , (req,res) => {
+router.post("/Get_criteria_show_detail", criteria.Get_criteria_show_detail , (req,res) => {
 
     res.send(res)
 });
+
+
+router.post("/Get_criteria_detail_by_scheduleID", criteria.Get_criteria_detail_by_scheduleID , (req,res) => {
+
+    res.send(res)
+});
+
 
 module.exports = router;
