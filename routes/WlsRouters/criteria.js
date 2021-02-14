@@ -27,7 +27,7 @@ router.post("/Add_schedule_condition", criteria.Add_schedule_condition );
 
 router.post("/Get_all_schedule", criteria.Get_all_schedule );
 
-router.post("/Get_schedule_ID", criteria.Get_schedule_ID );
+router.post("/Get_schedule_by_Id", criteria.Get_schedule_by_Id );
 
 router.post("/Get_schedule_detail_by_scheduleID", criteria.Get_schedule_detail_by_scheduleID );
 

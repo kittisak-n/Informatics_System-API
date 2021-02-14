@@ -151,7 +151,7 @@ try{
 
 }
 // ดึงข้อมูล schedule ทั้งหมด
-  exports.Get_all_schedule = (req, res) => {
+exports.Get_all_schedule = (req, res) => {
     let sql_get_schedule = "SELECT * FROM wls_schedule ";
 
     let array = {
@@ -166,7 +166,8 @@ try{
             message: "sql_get_schedule fail",
             results: err,
           });
-        } else {
+         } 
+         else {
         
           results.forEach(data => {
             
@@ -177,33 +178,37 @@ try{
               schedule_per_credit: data.schedule_per_credit,
               schedule_general_min: data.schedule_general_min,
               schedule_general_max: data.schedule_general_max,
+              schedule_status: data.schedule_status,
               schedule_create_by: data.schedule_create_by,
+              schedule_create_date: data.schedule_create_date
             };
      
             array.schedule.push(schedule);
-            res.json({
-              status: true,
-              message: "sql_get_schedule successes",
-              results: array,
-            });
-
+       
+         
           });
-    
-
+      
+        res.json({
+        status: true,
+        message: "sql_get_schedule successes",
+        results: array,
+      });
+         
         }
+      
       });
     } catch (err) {
       console.log(err);
       res.json({
         status: false,
-        message: "Fail call Get_criteria",
+        message: "sql_get_schedule fail",
         results: err,
       });
     }
 };
 
 // ดึงข้อมูลด้วย ID schedule
-exports.Get_schedule_ID = (req, res) => {
+exports.Get_schedule_by_Id = (req, res) => {
   let array = {
     schedule: {},
   };
