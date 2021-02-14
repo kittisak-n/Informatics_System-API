@@ -102,6 +102,11 @@ const dbConnect = require("../../connectDB");
 
 // ดึงข้อมูลด้วย ID schedule
 exports.Get_criteria_detail_by_scheduleID = (req, res) => {
+  let array = {
+    schedule: {},
+    criteria_Internal: {},
+    criteria_external: {},
+  };
   // ดึงข้อมูล กำหนดการ
   let sql_get_schedule = "";
   sql_get_schedule +=
@@ -182,13 +187,16 @@ exports.Get_criteria_detail_by_scheduleID = (req, res) => {
           });
         } else {
           results.forEach((data) => {
-            this.schedule_id = data.schedule_id;
-            this.schedule_name = data.schedule_name;
-            this.schedule_start_date = data.schedule_start_date;
-            this.schedule_per_credit = data.schedule_per_credit;
-            this.schedule_general_min = data.schedule_general_min;
-            this.schedule_general_max = data.schedule_general_max;
-            this.schedule_create_by = data.schedule_create_by;
+            let schedule = {
+              schedule_id: data.schedule_id,
+              schedule_name: data.schedule_name,
+              schedule_start_date: data.schedule_start_date,
+              schedule_per_credit: data.schedule_per_credit,
+              schedule_general_min: data.schedule_general_min,
+              schedule_general_max: data.schedule_general_max,
+              schedule_create_by: data.schedule_create_by,
+            };
+            array.schedule = schedule;
 
             dbConnect.query(
               sql_get_schedule_detail,
@@ -204,15 +212,12 @@ exports.Get_criteria_detail_by_scheduleID = (req, res) => {
                   results.forEach((data) => {
                     if (data.schedule_detail_type == 0) {
                       // 0 วิชาใน
-
                       if (data.schedule_detail_subject == 0) {
                         // 0 lucther
-
                         criteria_Internal.lecture.Bachelor =
                           data.schedule_detail_bachelor;
                         criteria_Internal.lecture.Graduate =
                           data.schedule_detail_graduate;
-
                         dbConnect.query(
                           sql_get_condition,
                           [data.schedule_detail_id],
@@ -263,21 +268,41 @@ exports.Get_criteria_detail_by_scheduleID = (req, res) => {
                                 results: err,
                               });
                             } else {
-                              let index = 0;
-                              results.forEach((data) => {
-                                let array_data = {
-                                  key: index + 1,
-                                  Minimum_number_students:
-                                    data.schedule_condition_min,
-                                  Maximum_number_students:
-                                    data.schedule_condition_max,
-                                  Weight_per_credit:
-                                    data.schedule_condition_weight_per_credit,
-                                };
-                                criteria_Internal.lab.condition.push(
-                                  array_data
-                                );
-                                index++;
+                              results.forEach(function (data, index) {
+                                if (index != results.length - 1) {
+                                  let array_data = {
+                                    key: index + 1,
+                                    Minimum_number_students:
+                                      data.schedule_condition_min,
+                                    Maximum_number_students:
+                                      data.schedule_condition_max,
+                                    Weight_per_credit:
+                                      data.schedule_condition_weight_per_credit,
+                                  };
+                                  criteria_Internal.lab.condition.push(
+                                    array_data
+                                  );
+                                } else {
+                                  let array_data = {
+                                    key: index + 1,
+                                    Minimum_number_students:
+                                      data.schedule_condition_min,
+                                    Maximum_number_students:
+                                      data.schedule_condition_max,
+                                    Weight_per_credit:
+                                      data.schedule_condition_weight_per_credit,
+                                  };
+                                  criteria_Internal.lab.condition.push(
+                                    array_data
+                                  );
+                                  array.criteria_Internal = criteria_Internal;
+                                  array.criteria_external = criteria_external;
+                                  res.json({
+                                    status: true,
+                                    message: "success",
+                                    results: array,
+                                  });
+                                }
                               });
                             }
                           }
@@ -322,13 +347,16 @@ exports.Get_criteria_detail_by_scheduleID = (req, res) => {
                                 criteria_external.lecture.condition.push(
                                   array_data
                                 );
-                              
+
                                 // comment แล้วเห็นค่าทั้งหมด
-                                console.log( "========================================== วิชานอก ==========================================");
+                                console.log(
+                                  "========================================== วิชานอก =========================================="
+                                );
                                 console.log(criteria_external);
-                                console.log( "========================================== วิชาใน ==========================================");
+                                console.log(
+                                  "========================================== วิชาใน =========================================="
+                                );
                                 console.log(criteria_Internal);
-                                
                               });
                             }
                           }
@@ -366,7 +394,7 @@ exports.Get_criteria_detail_by_scheduleID = (req, res) => {
                                 criteria_external.lab.condition.push(
                                   array_data
                                 );
-                                
+
                                 index++;
                               });
                             }
@@ -376,21 +404,12 @@ exports.Get_criteria_detail_by_scheduleID = (req, res) => {
                     }
                   });
                 }
-
-                   
               }
-              
             );
-            
           });
-          
         }
-        
       }
-
     );
-
-
   } catch (err) {
     console.log(err);
     res.json({
