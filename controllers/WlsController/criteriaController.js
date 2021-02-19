@@ -8,10 +8,6 @@ exports.Add_schedule = (req, res) => {
   sql_add_criteria += "VALUES (?,?,?,?,?,1,?,?,?,?)";
   // 'VALUES (?,?,?,1,18,1,"Komsan Tesana",NOW(),"update by","NOW()"'
 
-
-
-
-
   try {
    
     dbConnect.query(sql_add_criteria,[
