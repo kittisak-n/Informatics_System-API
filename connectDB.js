@@ -4,8 +4,8 @@ var dbConnect = mysql.createConnection({
     host: "127.0.0.1",
     user: "root",
     password: "",
-    database: "informatics-system",
-    //delsa_db informatics-system
+    database: "ifs_db",
+    //ifs_db informatics-system
     // multipleStatements: true
 });
 
