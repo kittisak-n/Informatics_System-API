@@ -7,7 +7,7 @@ exports.insertAccess = (req, res) => {
     sql_insert_access = 'values(?, ?, ?, ?, ?, CURRENT_TIMESTAMP(), ?, CURRENT_TIMESTAMP()) ';
 
     try {
-        dbConnect.query(sql_insert_access, [], (err, results) => {
+        dbConnect.query(sql_insert_access, [req.position_access_id, req.system_id, req.sub_system_id], (err, results) => {
             if (err) {
                 console.log(err);
                 res.json({

@@ -3,7 +3,7 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const router = express.Router();
 
-const userController = require('../../controllers/MpsController/personController');
+const userController = require('../../controllers/PmsController/personController');
 router.use(session({
     secret: 'secret',
     resave: true,
@@ -16,7 +16,6 @@ router.use(bodyParser.urlencoded({
 router.use(bodyParser.json());
 
 /* test get username password by ID */
-router.post("/checkUser", userController.LoginUser);
-
+router.post("/checkUser", userController.checkUser);
 
 module.exports = router;
