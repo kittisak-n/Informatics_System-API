@@ -2,9 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const MpsRouters = require('./routes/MpsRouters/user');
-
-
-
 const WlsRouters = require('./routes/WlsRouters/criteria');
 
 var app = express();
