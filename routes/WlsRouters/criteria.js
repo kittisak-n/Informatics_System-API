@@ -19,14 +19,20 @@ router.use(bodyParser.urlencoded({
 router.use(bodyParser.json());
 
 
-router.post("/Add_criteria", criteria.Add_criteria, (req,res) => {
+router.post("/Add_schedule", criteria.Add_schedule);
 
-    res.send(res)
-});
+router.post("/Add_schedule_detail", criteria.Add_schedule_detail );
 
-router.post("/Get_criteria", criteria.Get_criteria , (req,res) => {
+router.post("/Add_schedule_condition", criteria.Add_schedule_condition );
 
-    res.send(res)
-});
+router.post("/Get_all_schedule", criteria.Get_all_schedule );
+
+router.post("/Get_schedule_by_Id", criteria.Get_schedule_by_Id );
+
+router.post("/Get_schedule_detail_by_scheduleID", criteria.Get_schedule_detail_by_scheduleID );
+
+router.post("/Get_condition_by_schedule_detail_id", criteria.Get_condition_by_schedule_detail_id );
+
+
 
 module.exports = router;
