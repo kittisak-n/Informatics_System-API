@@ -5,11 +5,10 @@ exports.InsertCourseCSV = (req, res) => {
         const fs = require('fs');
         const raw = fs.readFileSync('C:\\Users\\HIGH\\Desktop\\Book1.csv', 'utf8');
         const data = raw.split(/\r?\n/);
-        console.log('result', data[0]);
+        console.log('result', data);
 
         res.json({
-            status: true,
-            message: "Fail Add_criteria",
+            data
         });
     } catch (err) {
         console.log(err);
