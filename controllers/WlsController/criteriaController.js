@@ -1,6 +1,6 @@
 const dbConnect = require("../../connectDB");
 
-// เพิ่ม Add_schedule
+// เพิ่ม Add_schedules
 exports.Add_schedule = (req, res) => {
   let sql_add_criteria = "";
   sql_add_criteria +=
