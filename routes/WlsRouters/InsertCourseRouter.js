@@ -3,7 +3,7 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 
 const router = express.Router();
-
+module.exports = router;
 const insertcourse = require('../../controllers/WlsController/InsertCourseController');
 /* test get username password by ID */
 
