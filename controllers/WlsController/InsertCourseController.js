@@ -7,38 +7,54 @@ exports.InsertCourseCSV = (req, res) => {
             course_create_date,course_update_by,course_update_date)`;
     sql += "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
-    try {
-        dbConnect.query(sql, [
-            data[0],
-            data[0],
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            new Date(),
-            1,
-            new Date()
-        ], (err, results) => {
-            if (err) {
-                res.json({
-                    status: false,
-                    message: "sql_add_criteria fail",
-                    results: err,
-                });
-            } else {
+    const xlsxFile = require('read-excel-file/node');
 
-                res.json({
-                    status: true,
-                    message: "sql_add_criteria sucesses",
-                    results: results
-                });
-
+    xlsxFile('C:\\Users\\HIGH\\Desktop\\FormatInput.xlsx').then((rows) => {
+        // console.log(rows);
+        // console.table(rows);
+        for (i in rows) {
+            for (j in rows[i]) {
+                // console.dir(rows[i][j]);
             }
+        }
+    })
 
-        });
+    try {
+
+
+
+
+        // dbConnect.query(sql, [
+        //     data[0],
+        //     data[0],
+        //     1,
+        //     1,
+        //     1,
+        //     1,
+        //     1,
+        //     1,
+        //     1,
+        //     new Date(),
+        //     1,
+        //     new Date()
+        // ], (err, results) => {
+        //     if (err) {
+        //         res.json({
+        //             status: false,
+        //             message: "sql_add_criteria fail",
+        //             results: err,
+        //         });
+        //     } else {
+
+        //         res.json({
+        //             status: true,
+        //             message: "sql_add_criteria sucesses",
+        //             results: results
+        //         });
+
+        //     }
+
+        // });
     } catch (err) {
         console.log(err);
         res.json({
