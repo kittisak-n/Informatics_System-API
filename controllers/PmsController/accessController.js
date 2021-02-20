@@ -1,6 +1,7 @@
 const dbConnect = require('../../connectDB');
 const AD = require('activedirectory2').promiseWrapper;
 
+//
 exports.insertAccess = (req, res) => {
     let sql_insert_access = '';
     sql_insert_access = 'insert into pms_access(position_access_id, system_id, sub_system_id, access_status, access_create_by, access_create_date, access_update_by, access_update_date) ';
