@@ -33,6 +33,8 @@ router.post("/Get_schedule_detail_by_scheduleID", criteria.Get_schedule_detail_b
 
 router.post("/Get_condition_by_schedule_detail_id", criteria.Get_condition_by_schedule_detail_id );
 
+router.post("/Update_status_schedule", criteria.Update_status_schedule );
+
 
 
 module.exports = router;
