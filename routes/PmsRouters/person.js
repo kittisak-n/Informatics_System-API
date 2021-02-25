@@ -17,5 +17,8 @@ router.use(bodyParser.json());
 
 /* test get username password by ID */
 router.post("/checkUser", userController.checkUser);
+router.post("/searcLdaphPerson", userController.searcLdaphPerson);
+
+router.post("/getAllPerosn", userController.getAllPerosn);
 
 module.exports = router;

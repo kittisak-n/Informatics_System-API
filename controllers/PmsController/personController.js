@@ -2,27 +2,27 @@ const dbConnect = require('../../connectDB');
 const AD = require('activedirectory2').promiseWrapper;
 
 exports.checkUser = (req, res) => {
-
-    let username = req.body.username + "@buu.ac.th";
-    let password = req.body.password;
+    console.log(req);
+    let username = req.body.params.username + "@buu.ac.th";
+    let password = req.body.params.password;
 
     let ProfileUser;
     let System = [];
 
     let sql_CheckUser_admin = '';
-    sql_CheckUser_admin += 'select PmsPS.person_id, PmsPS.person_firstname_TH as Person_name ';
-    sql_CheckUser_admin += 'from pms_person PmsPS ';
-    sql_CheckUser_admin += 'left join ifs_category_detail IfsCD on IfsCD.category_detail = PmsPS.prefix ';
-    sql_CheckUser_admin += 'where PmsPS.person_username = ? and PmsPS.person_password = ? and PmsPS.person_status = 1';
+    sql_CheckUser_admin += 'select PmsPS.person_id, PmsPS.person_firstname_TH as person_name' + "\n";
+    sql_CheckUser_admin += 'from pms_person PmsPS' + "\n";
+    sql_CheckUser_admin += 'left join pms_prefix pf on pf.pf_id = PmsPS.prefix_id \n';
+    sql_CheckUser_admin += 'where PmsPS.person_username = ? and PmsPS.person_password = ? and PmsPS.person_status = 1 ' + "\n";
 
     let sql_CheckUser_user = '';
-    sql_CheckUser_user += 'select PmsPS.person_id, CONCAT(IfsCD.category_detail_name_TH,PmsPS.person_firstname_TH," ",PmsPS.person_lastname_TH) as Person_name ';
-    sql_CheckUser_user += 'from pms_person PmsPS ';
-    sql_CheckUser_user += 'left join ifs_category_detail IfsCD on IfsCD.category_detail = PmsPS.prefix ';
-    sql_CheckUser_user += 'where PmsPS.person_username = ? and PmsPS.person_password = ? and PmsPS.person_status = 1';
+    sql_CheckUser_user += 'select PmsPS.person_id, CONCAT(pf.pf_name," ",PmsPS.person_firstname_TH," ",PmsPS.person_lastname_TH) as person_name \n';
+    sql_CheckUser_user += 'from pms_person PmsPS \n';
+    sql_CheckUser_user += 'left join pms_prefix pf on pf.pf_id = PmsPS.prefix_id \n';
+    sql_CheckUser_user += 'where PmsPS.person_username = ? and PmsPS.person_status = 1';
 
     let sql_CheckPermission_System = '';
-    sql_CheckPermission_System += 'select PmsST.system_id as id, PmsST.icon as icon, PmsST.system_name_TH as Name, PmsST.system_path as Path ';
+    sql_CheckPermission_System += 'select PmsST.system_key, PmsST.system_id as id, PmsST.icon as icon, PmsST.system_name_TH as Name, PmsST.system_path as Path ';
     sql_CheckPermission_System += 'from pms_person PmsPS ';
     sql_CheckPermission_System += 'left join pms_prepair PmsPP on PmsPP.person_id = PmsPS.person_id ';
     sql_CheckPermission_System += 'left join pms_access PmsAC on PmsAC.position_access_id = PmsPP.position_access_id ';
@@ -31,7 +31,7 @@ exports.checkUser = (req, res) => {
     sql_CheckPermission_System += 'group by PmsAC.system_id';
 
     let sql_CheckPermission_SubSystem = '';
-    sql_CheckPermission_SubSystem += 'select PmsSST.icon as icon, PmsSST.sub_system_name_TH as Name, PmsSST.sub_system_path as Path ';
+    sql_CheckPermission_SubSystem += 'select pmsSSt.sub_system_key, PmsSST.icon as icon, PmsSST.sub_system_name_TH as Name, PmsSST.sub_system_path as Path ';
     sql_CheckPermission_SubSystem += 'from pms_person PmsPS ';
     sql_CheckPermission_SubSystem += 'left join pms_prepair PmsPP on PmsPP.person_id = PmsPS.person_id ';
     sql_CheckPermission_SubSystem += 'left join pms_access PmsAC on PmsAC.position_access_id = PmsPP.position_access_id ';
@@ -41,10 +41,10 @@ exports.checkUser = (req, res) => {
 
 
     try {
-
+        console.log(username)
         console.log('start login')
         if (username == "adminIFs@buu.ac.th") {
-            dbConnect.query(sql_CheckUser_admin, [username, req.body.password], (err, results) => {
+            dbConnect.query(sql_CheckUser_admin, [username, password], (err, results) => {
                 if (err) {
                     console.log(err)
                     res.json({
@@ -64,7 +64,7 @@ exports.checkUser = (req, res) => {
                             });
                         } else {
                             System = results;
-                            System.forEach(function(system, index) {
+                            System.forEach(function (system, index) {
                                 console.log(index != System.length - 1)
                                 if (index != System.length - 1) {
                                     dbConnect.query(sql_CheckPermission_SubSystem, [username], (err, results) => {
@@ -111,7 +111,7 @@ exports.checkUser = (req, res) => {
                 password: password
             }
             let ad = new AD(config);
-            ad.authenticate(username, password, function(err, auth) {
+            ad.authenticate(username, password, function (err, auth) {
                 if (err) {
                     console.log('ERROR: ' + JSON.stringify(err));
                     res.json({
@@ -128,7 +128,7 @@ exports.checkUser = (req, res) => {
                     let sAMAccountName = req.body.username;
 
                     // Find user by a sAMAccountName
-                    ad.findUser(sAMAccountName, function(err, user) {
+                    ad.findUser(sAMAccountName, function (err, user) {
                         if (err) {
                             console.log('ERROR: ' + JSON.stringify(err));
                             return;
@@ -136,16 +136,80 @@ exports.checkUser = (req, res) => {
                         if (!user) {
                             console.log('User: ' + sAMAccountName + ' not found.');
                         } else {
-                            console.log('User: ' + user)
+                            console.log(user)
                             console.log("displayName: ", user.displayName);
                             console.log("Firstname: ", user.givenName);
                             console.log("Lastname: ", user.sn);
                             console.log("Username: ", user.sAMAccountName);
                             console.log("Email: ", user.mail);
-                            res.json({
-                                status: false,
-                                message: 'Login Success',
-                                results: user
+                            dbConnect.query(sql_CheckUser_user, [username], (err, results) => {
+                                if (err) {
+                                    console.log(err)
+                                    res.json({
+                                        status: false,
+                                        message: 'user Admin login fail',
+                                        results: err
+                                    });
+                                } else {
+                                    if (results) {
+                                        console.log(results);
+                                        res.json({
+                                            status: true,
+                                            message: 'user login success',
+                                            results: user
+                                        });
+                                    } else {
+                                        ProfileUser = results[0];
+                                        dbConnect.query(sql_CheckPermission_System, [username], (err, results) => {
+                                            if (err) {
+                                                console.log(err)
+                                                res.json({
+                                                    status: false,
+                                                    message: 'user Admin login fail',
+                                                    results: err
+                                                });
+                                            } else {
+                                                System = results;
+                                                System.forEach(function (system, index) {
+                                                    console.log(index != System.length - 1)
+                                                    if (index != System.length - 1) {
+                                                        dbConnect.query(sql_CheckPermission_SubSystem, [username], (err, results) => {
+                                                            if (err) {
+                                                                res.json({
+                                                                    status: false,
+                                                                    message: 'user Admin login fail',
+                                                                    results: err
+                                                                });
+                                                            } else {
+                                                                System[index].subSystem = results;
+                                                                console.log(System[index])
+                                                            }
+                                                        })
+                                                    } else {
+                                                        dbConnect.query(sql_CheckPermission_SubSystem, [username], (err, results) => {
+                                                            if (err) {
+                                                                res.json({
+                                                                    status: false,
+                                                                    message: 'user Admin login fail',
+                                                                    results: err
+                                                                });
+                                                            } else {
+                                                                System[index].subSystem = results;
+                                                                res.json({
+                                                                    status: true,
+                                                                    message: 'user login success',
+                                                                    ProfileUser: ProfileUser,
+                                                                    System: System,
+                                                                });
+                                                            }
+                                                        })
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+
+                                }
                             });
                         }
                     });
@@ -156,7 +220,6 @@ exports.checkUser = (req, res) => {
         }
 
     } catch (err) {
-        console.log(123)
         console.log(err);
         res.json({
             status: false,
@@ -166,10 +229,66 @@ exports.checkUser = (req, res) => {
     }
 }
 
+exports.searcLdaphPerson = (req, res) => {
+
+    let username = req.body.username + "@buu.ac.th";
+    let password = req.body.password;
+
+    const config = {
+        url: 'ldap://10.4.1.82',
+        baseDN: 'ou=People,DC=BUU,DC=AC,DC=TH',
+        username: username,
+        password: password
+    }
+    let ad = new AD(config);
+    ad.authenticate(username, password, function (err, auth) {
+        if (err) {
+            console.log('ERROR: ' + JSON.stringify(err));
+        }
+        if (auth) {
+            console.log('Authenticated!');
+
+            console.log("=== Search User By sAMAccountName ========");
+            // setup usernane to search 
+            let sAMAccountName = req.body.username_search;
+
+            // Find user by a sAMAccountName
+            ad.findUser(sAMAccountName, function (err, results) {
+                if (err) {
+                    console.log('ERROR: ' + JSON.stringify(err));
+
+                } else {
+                    if (!results) {
+                        console.log('User: ' + sAMAccountName + ' not found.');
+                        res.json({
+                            status: false,
+                            results: results
+                        })
+                    } else {
+                        console.log(results)
+                        res.json({
+                            status: true,
+                            results: results
+                        })
+                    }
+                }
+
+            });
+        } else {
+            console.log('Authentication failed!');
+            return res.json({
+                status: false
+            })
+        }
+    });
+}
+
+
 exports.getAllPerosn = (req, res) => {
     let sql_getAll_person = '';
-    sql_getAll_person = 'select person_id,person_username,person_password,prefix,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,person_province,person_amphur,person_district,person_position,person_status';
-    sql_getAll_person = 'from pms_person';
+    sql_getAll_person += 'select person_id,person_username,person_password,prefix_id,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,person_province,person_amphur,person_district,person_position,person_status \n';
+    sql_getAll_person += 'from pms_person \n';
+    sql_getAll_person += 'where person_id != 1';
 
 
     try {
@@ -200,7 +319,7 @@ exports.getAllPerosn = (req, res) => {
 
 exports.getByIdPerson = (req, res) => {
     let sql_getById_person = '';
-    sql_getById_person = 'select person_id,person_username,person_password,prefix,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,person_province,person_amphur,person_district,person_position,person_status';
+    sql_getById_person = 'select person_id,person_username,person_password,prefix_id,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,person_province,person_amphur,person_district,person_position,person_status';
     sql_getById_person = 'from pms_person ';
     sql_getById_person = 'where person_id = ?'
 
