@@ -18,4 +18,4 @@ router.use(bodyParser.urlencoded({
 }));
 router.use(bodyParser.json());
 
-router.post("/insertcourse", insertcourse.InsertCourseCSV);
+router.post("/insertcourse", insertcourse.InsertCourseExcel);
