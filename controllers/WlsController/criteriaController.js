@@ -293,7 +293,7 @@ exports.Get_schedule_detail_by_scheduleID = (req, res) => {
     });
   }
 };
-// ดึงข้อมูล condition ด้วย schedule_detail_id
+// ดึงข้อมูล condition ด้วย schedule_detail_id .
 exports.Get_condition_by_schedule_detail_id = (req, res) => {
   let array = {
     condition: [],
