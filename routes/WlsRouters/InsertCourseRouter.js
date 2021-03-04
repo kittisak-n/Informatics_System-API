@@ -19,3 +19,4 @@ router.use(bodyParser.urlencoded({
 router.use(bodyParser.json());
 
 router.post("/insertcourse", insertcourse.InsertCourseExcel);
+router.post("/getallcourse", insertcourse.get_all_course);
