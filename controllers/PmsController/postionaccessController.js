@@ -66,37 +66,46 @@ exports.getByIdPositionAccess = (req, res) => {
 }
 
 exports.insertPositionAccess = (req, res) => {
+    console.log(req.body)
     let sql_insert_PositionAccess = ''
-    sql_insert_PositionAccess += 'insert into pms_postion_access(postion_access_name_TH, postion_access_name_EN, postion_access_create_by, postion_access_create_date, postion_access_update_by, postion_access_update_date) ';
-    sql_insert_PositionAccess += 'values(?, ?, ?, CURRENT_TIMESTAMP(), ?, CURRENT_TIMESTAMP())';
+    sql_insert_PositionAccess += 'insert into pms_postion_access(postion_access_name_TH, postion_access_create_by, postion_access_create_date, postion_access_update_by, postion_access_update_date) \n';
+    sql_insert_PositionAccess += 'values(?, ?, CURRENT_TIMESTAMP(), ?, CURRENT_TIMESTAMP())';
 
-    let sql_get_last_id_sql_insert_PositionAccess = "select ppa.postion_access_id from pms_postion_access ppa order by ppa.postion_access_id DESC limit 1"
+    let sql_insert_access = '';
+    sql_insert_access += 'insert pms_access(position_access_id,system_id,sub_system_id,access_status,access_create_by,access_create_date,access_update_by,access_update_date) \n'
+    sql_insert_access += 'values(?, ?, ?, ?, ?, CURRENT_TIMESTAMP(), ?, CURRENT_TIMESTAMP())';
 
     try {
-        dbConnect.query(sql_insert_PositionAccess, [req.body.postion_access_name_TH, req.body.postion_access_name_EN, req.body.postion_access_create_by, req.body.postion_access_update_by], (err, results) => {
+        dbConnect.query(sql_insert_PositionAccess, [req.body.positionAccess.name_positionaccess, req.body.positionAccess.create_by, req.body.positionAccess.create_by], (err, results) => {
             if (err) {
                 console.log(err);
-                res.json({
-                    status: false,
-                    message: 'insert PositionAccess fail',
-                    results: err
-                });
             } else {
-                dbConnect.query(sql_get_last_id_sql_insert_PositionAccess, (err, results) => {
-                    res.json({
-                        status: true,
-                        message: 'user PositionAccess success and return last insert id',
-                        results: results
-                    });
-                })
+                console.log(results.insertId);
+                req.body.system.forEach(function (ele, index) {
+                    if (index == (req.body.system.length - 1)) {
+                        dbConnect.query(sql_insert_access, [results.insertId, ele.system_id, ele.sub_system_id, 1, req.body.positionAccess.create_by, req.body.positionAccess.create_by], (err, results) => {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                res.json({
+                                    status: true,
+                                })
+                            }
+                        })
+                    } else {
+                        dbConnect.query(sql_insert_access, [results.insertId, ele.system_id, ele.sub_system_id, 1, req.body.positionAccess.create_by, req.body.positionAccess.create_by], (err, results) => {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log(results)
+                            }
+                        })
+                    }
+                });
             }
         });
-    } catch (err) {
-        res.json({
-            status: false,
-            message: 'user PositionAccess fail',
-            results: err
-        });
+    } catch (error) {
+        console.log(error)
     }
 }
 

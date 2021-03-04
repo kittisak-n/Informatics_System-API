@@ -1,17 +1,17 @@
 const dbConnect = require('../../connectDB');
 const AD = require('activedirectory2').promiseWrapper;
 
-exports.get_system = (err, req){
-    let sql_get_system = '';
-    sql_get_system += 'SELECT system_id,system_name_TH \n';
-    sql_get_system += 'FROM pms_system \n';
+exports.getSubSystem = (req, res) => {
+    let sql_get_subsystem = '';
+    sql_get_subsystem += 'SELECT sub_system_id,system_id,sub_system_name_TH \n';
+    sql_get_subsystem += 'FROM pms_sub_system \n';
 
     try {
-        dbConnect.query(sql_get_system, [], (err, results) => {
+        dbConnect.query(sql_get_subsystem, [], (err, results) => {
             if (err) {
                 console.log(err);
             } else {
-                results.json({
+                res.json({
                     status: true,
                     results: results
                 })
