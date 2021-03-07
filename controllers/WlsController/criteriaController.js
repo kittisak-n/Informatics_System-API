@@ -351,7 +351,7 @@ exports.Get_condition_by_schedule_detail_id = (req, res) => {
   }
 };
 
-// อัพเดทข้อมูล schedule ที่มีสถานะใช้งานอยู่ เพื่อเปลี่ยนสถานะก่อนการเพิ่ม s
+// อัพเดทข้อมูล schedule ที่มีสถานะใช้งานอยู่ เพื่อเปลี่ยนสถานะก่อนการเพิ่ม 
 exports.Update_status_schedule = (req, res) => {
 
   // ดึงข้อมูล กำหนดการ
