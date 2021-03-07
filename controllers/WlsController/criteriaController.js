@@ -293,7 +293,7 @@ exports.Get_schedule_detail_by_scheduleID = (req, res) => {
     });
   }
 };
-// ดึงข้อมูล condition ด้วย schedule_detail_id
+// ดึงข้อมูล condition ด้วย schedule_detail_id .
 exports.Get_condition_by_schedule_detail_id = (req, res) => {
   let array = {
     condition: [],
@@ -351,7 +351,7 @@ exports.Get_condition_by_schedule_detail_id = (req, res) => {
   }
 };
 
-// อัพเดทข้อมูล schedule ที่มีสถานะใช้งานอยู่ เพื่อเปลี่ยนสถานะก่อนการเพิ่ม s
+// อัพเดทข้อมูล schedule ที่มีสถานะใช้งานอยู่ เพื่อเปลี่ยนสถานะก่อนการเพิ่ม  szzz
 exports.Update_status_schedule = (req, res) => {
 
   // ดึงข้อมูล กำหนดการ
