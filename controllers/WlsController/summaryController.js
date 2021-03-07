@@ -42,7 +42,7 @@ exports.get_summary =  (req, res) => {
   sql_get_summary +=
     "LEFT JOIN pms_person ON wls_summary.person_id = pms_person.person_id\n";
     sql_get_summary +=
-    "LEFT JOIN pms_postion ON pms_person.person_position = pms_postion.position_id\n";
+    "LEFT JOIN pms_position ON pms_person.person_position = pms_position.position_id\n";
     
 
   try {
