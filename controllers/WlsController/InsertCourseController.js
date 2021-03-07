@@ -68,7 +68,9 @@ exports.get_subject_by_person_id = (req, res) => {
     ON person.section_id = section.section_id
     LEFT JOIN wls_course AS course
     ON section.section_course_id = course.course_id
-    WHERE person.person_id = ? AND section.section_status = 1`
+    WHERE person.person_id = ? AND section.section_status = 1
+    GROUP BY section.section_number `
+
 
     try {
         dbConnect.query(sql_get_subject_by_person_id, [req.body.person_id], (err, results) => {
@@ -138,58 +140,65 @@ exports.change_status_section = (req, res) => {
 }
 exports.InsertCourseExcel = (req, res) => {
     // Check Section ซ้ำ ก่อน Insert
+    console.log(req.body.course)
+
     try {
-        req.body.course.forEach(function (ele, index) {
+        req.body.course.forEach(function (course, index) {
+            getCourseId(course.course_code, function (results) {
+                console.log(results)
+                if (results.length === 0) {
+                    InsertCourse(course, function (results) {
+                        course.course_id = results;
+                        // console.log(course.course_section)
+                        course.course_section.forEach(function (section, index) {
+                            InsertSection(section, course.course_id, req.body.course_term, req.body.course_year, function (results) {
+                                section.section_id = results
+                                section.section_date.forEach(function (section_date, index) {
+                                    InsertSectionDetail(section_date, section.section_id, function (results) {
+                                        getPersonId(section_date, function (results) {
+                                            console.log(results);
+                                            section_date.course_person = results[0].person_id
+                                            section_date.course_person_position = results[0].person_position
+                                            InsertSectionPserson(section_date, section.section_id, function (results) {
 
-            getCourseId(ele.course_code, function (result) {
-                if (result.length === 0) {
-                    console.log('insert');
-                    InsertCourse(ele, function (result) {
-                        ele.course_id = result
-                        InsertSection(ele, req.body.course_term, req.body.course_year, function (result) {
-                            ele.date.forEach(function (ele) {
-                                ele.section_id = result;
-                                InsertSectionDetail(ele, function (results) {
-                                    console.log(results);
-                                })
-                                getPersonId(ele, function (results) {
-                                    console.log(results);
-                                    ele.course_person = results[0].person_id
-                                    ele.course_person_position = results[0].person_position
-                                    InsertSectionPserson(ele, function (results) {
-
-                                    })
-                                })
-                            })
-                        });
-                    })
-                } else {
-                    console.log('insert dup');
-                    getCourseId(ele.course_code, function (results) {
-                        ele.course_id = results[0].course_id
-                        getCountSectionDuplicate(ele, function (results) {
-                            console.log("Count Sectoion :", results[0].count_section)
-                            InsertSection(ele, req.body.course_term, req.body.course_year, function (results) {
-                                ele.date.forEach(function (ele) {
-                                    ele.section_id = results;
-                                    InsertSectionDetail(ele, function (results) {
-                                        console.log(results);
-                                    })
-                                    getPersonId(ele, function (results) {
-                                        console.log("Person : ", results);
-                                        ele.course_person = results[0].person_id
-                                        ele.course_person_position = results[0].person_position
-                                        InsertSectionPserson(ele, function (results) {
-                                            console.log(index)
+                                            })
                                         })
                                     })
                                 })
                             })
                         })
                     })
+                } else {
+                    console.log('insert dup');
+                    getCourseId(course.course_code, function (results) {
+                        course.course_id = results[0].course_id
+                        course.course_section.forEach(function (section, index) {
+                            getCountSectionDuplicate(course.course_id, section.section_number, function (results) {
+                                console.log("Count Sectoion :", results[0].count_section) // Check count section
+                                if (results[0].count_section == 0) { // Add New section
+                                    InsertSection(section, course.course_id, req.body.course_term, req.body.course_year, function (results) {
+                                        section.section_id = results
+                                        section.section_date.forEach(function (section_date, index) {
+                                            InsertSectionDetail(section_date, section.section_id, function (results) {
+                                                getPersonId(section_date, function (results) {
+                                                    console.log(results);
+                                                    section_date.course_person = results[0].person_id
+                                                    section_date.course_person_position = results[0].person_position
+                                                    InsertSectionPserson(section_date, section.section_id, function (results) {
+
+                                                    })
+                                                })
+                                            })
+                                        })
+                                    })
+                                }
+                            })
+                        })
+
+                    })
                 }
             })
-        });
+        })
     } catch (error) {
         console.log(error)
     }
@@ -234,12 +243,12 @@ async function getPersonId(value, callback) {
         callback(false)
     }
 }
-async function getCountSectionDuplicate(value, callback) {
+async function getCountSectionDuplicate(course_id, section_number, callback) {
     let sql_get_id_section = "";
     sql_get_id_section += `SELECT COUNT(section_course_id) as count_section FROM wls_section WHERE section_course_id  = ? AND section_number = ?`;
 
     try {
-        dbConnect.query(sql_get_id_section, [value.course_id, value.section_number], function (err, results) {
+        dbConnect.query(sql_get_id_section, [course_id, section_number], function (err, results) {
             if (err) {
                 res.json({
                     status: false,
@@ -293,10 +302,10 @@ const InsertCourse = (ele, callback) => {
             ele.course_code, //course_code 
             ele.course_year, //course_year
             ele.course_name, //course_name
-            ele.section_unit, //course_unitt
-            ele.section_lac_unit, //course_lactrue_unit
-            ele.section_lab_unit, //course_lab_unit
-            ele.section_self_unit, //course_learning_unit
+            ele.course_unit, //course_unitt
+            ele.course_lac_unit, //course_lactrue_unit
+            ele.course_lab_unit, //course_lab_unit
+            ele.course_self_unit, //course_learning_unit
             ele.course_type,//course_syllabus_id
             1, //course_create_by PS_id
             new Date(), //course_create_date2
@@ -315,7 +324,7 @@ const InsertCourse = (ele, callback) => {
 
 }
 
-const InsertSection = (ele, section_term, section_year, callback) => {
+const InsertSection = (ele, course_id, section_term, section_year, callback) => {
 
     //Insert Section
     let sql_insert_section = "";
@@ -334,7 +343,7 @@ const InsertSection = (ele, section_term, section_year, callback) => {
 
     try {
         dbConnect.query(sql_insert_section, [
-            ele.course_id,
+            course_id,
             ele.section_number,
             ele.section_detail,
             ele.section_student,
@@ -357,7 +366,7 @@ const InsertSection = (ele, section_term, section_year, callback) => {
     }
 }
 
-async function InsertSectionDetail(ele, callback) {
+async function InsertSectionDetail(ele, section_id, callback) {
 
     //Insert Section Detail
     let sql_insert_section_detail = "";
@@ -374,7 +383,7 @@ async function InsertSectionDetail(ele, callback) {
 
     try {
         dbConnect.query(sql_insert_section_detail, [
-            ele.section_id,
+            section_id,
             ele.section_date,
             ele.section_start,
             ele.section_end,
@@ -396,7 +405,7 @@ async function InsertSectionDetail(ele, callback) {
 
 }
 
-async function InsertSectionPserson(ele, callback) {
+async function InsertSectionPserson(ele, section_id, callback) {
 
     //Insert Section Person
     let sql_insert_section_person = "";
@@ -415,7 +424,7 @@ async function InsertSectionPserson(ele, callback) {
 
     try {
         dbConnect.query(sql_insert_section_person, [
-            ele.section_id,
+            section_id,
             ele.course_person, //person id
             ele.person_position, //person_postion_id
             0,
