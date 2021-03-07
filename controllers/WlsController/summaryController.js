@@ -40,11 +40,15 @@ exports.get_summary =  (req, res) => {
   sql_get_summary +=
     "LEFT JOIN wls_schedule ON wls_summary.schedule_id = wls_schedule.schedule_id\n";
   sql_get_summary +=
-    "LEFT JOIN pms_person ON wls_summary.person_id = wls_summary.person_id\n";
+    "LEFT JOIN pms_person ON wls_summary.person_id = pms_person.person_id\n";
     sql_get_summary +=
-    "LEFT JOIN pms_position ON pms_person.person_position = pms_position.position_id\n";
+    "LEFT JOIN pms_position ON pms_person.person_position = pms_position.position_id\n GROUP BY pms_person.person_id";
     
-
+    // SELECT * FROM `wls_summary` LEFT JOIN wls_schedule ON wls_summary.schedule_id = wls_schedule.schedule_id
+    // LEFT JOIN pms_person ON wls_summary.person_id = wls_summary.person_id
+    // LEFT JOIN pms_position ON pms_person.person_position = pms_position.position_id
+    // GROUP BY wls_summary.person_id;
+        
   try {
      dbConnect.query(sql_get_summary, (err, results) => {
       if (err) {
