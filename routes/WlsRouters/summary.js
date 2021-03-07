@@ -16,8 +16,11 @@ router.use(bodyParser.urlencoded({
 }));
 router.use(bodyParser.json());
 
-router.post("/Get_detail_summary", summary.Get_detail_summary);
+
 router.post("/Get_person_by_id", summary.Get_person_by_id);
+router.post("/get_summary", summary.Get_person_by_id);
 
 
 
+
+module.exports = router;
