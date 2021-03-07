@@ -1,7 +1,7 @@
 const dbConnect = require("../../connectDB");
 
 // เพิ่ม Add_schedules
-(exports.Add_schedule = (req, res) => {
+exports.Add_schedule = (req, res) => {
   let sql_add_criteria = "";
   sql_add_criteria +=
     "INSERT INTO wls_schedule(schedule_name,schedule_start_date,schedule_per_credit,schedule_general_min,schedule_general_max,schedule_status,schedule_create_by,schedule_create_date,schedule_update_by,schedule_update_date)";
@@ -133,7 +133,7 @@ exports.Add_schedule_condition = (req, res) => {
       status: false,
       message: "Fail Add_schedule_condition",
       results: err,
-    });
+  });
   }
 };
 // ดึงข้อมูล schedule ทั้งหมด
