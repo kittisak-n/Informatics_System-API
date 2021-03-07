@@ -46,7 +46,7 @@ exports.Add_schedule = (req, res) => {
       results: err,
     });
   }
-}),
+},
   // เพิ่ม Add_schedule_detail
   (exports.Add_schedule_detail = (req, res) => {
     let sql_add_schedule_detail =
