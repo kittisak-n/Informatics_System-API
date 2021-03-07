@@ -35,9 +35,9 @@ exports.getAllPositionAccess = (req, res) => {
 
 exports.getByIdPositionAccess = (req, res) => {
     let sql_getById_PositionAccess = '';
-    sql_getById_PositionAccess = 'select ppa.postion_access_id, ppa.postion_access_name_TH '
-    sql_getById_PositionAccess = 'from pms_postion_access ppa'
-    sql_getById_PositionAccess = 'where ppa.postion_access_id = ?'
+    sql_getById_PositionAccess += 'select ppa.postion_access_id, ppa.postion_access_name_TH '
+    sql_getById_PositionAccess += 'from pms_postion_access ppa'
+    sql_getById_PositionAccess += 'where ppa.postion_access_id = ?'
 
     try {
         dbConnect.query(sql_getById_PositionAccess, [req.body.postion_access_id], (err, results) => {

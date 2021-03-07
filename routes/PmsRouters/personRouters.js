@@ -26,7 +26,21 @@ router.post("/getDistricts", personController.getDistricts);
 router.post("/getProvinces", personController.getProvinces);
 
 router.post("/getPosition", personController.getPosition);
+router.post("/getByIdPerson", personController.getByIdPerson);
 router.post("/getPostionAccess", personController.getPostionAccess);
+router.post("/getSystemByIdPerson", personController.getSystemByIdPerson);
 
-router.post("/insertPerson",personController.insertPerson);
+router.post("/insertPerson", personController.insertPerson);
+router.post("/updatePerson", personController.updatePerson);
+router.post("/closePersonId", personController.closePersonId);
+
+router.post("/deletePerson", personController.deletePerson);
+router.post("/deletePrepair", personController.deletePrepair);
+
+router.post("/getPervinceId", personController.getPervinceId);
+router.post("/getAmphureId", personController.getAmphureId);
+router.post("/getDistrictId", personController.getDistrictId);
+router.post("/getPrefixId", personController.getPrefixId);
+router.post("/getPositionId", personController.getPositionId);
+
 module.exports = router;

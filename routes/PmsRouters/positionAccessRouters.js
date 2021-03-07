@@ -19,5 +19,8 @@ router.use(bodyParser.json());
 // /* test get username password by ID */
 router.post("/insertPositionAccess", postionaccessController.insertPositionAccess);
 router.post("/getAllPositionAccess", postionaccessController.getAllPositionAccess);
+router.post("/getByIdPositionAccess", postionaccessController.getByIdPositionAccess);
+
+
 
 module.exports = router;

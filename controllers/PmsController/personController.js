@@ -275,13 +275,13 @@ exports.searcLdaphPerson = (req, res) => {
     });
 }
 
-
 exports.getAllPerson = (req, res) => {
     let sql_getAll_person = '';
-    sql_getAll_person += 'select person_id,person_username,person_password,pf_name_abbr,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,person_province,person_amphur,person_district,postition_name,person_status \n';
+    sql_getAll_person += 'select person_id,person_username,pf_name_abbr,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,person_province,person_amphur,person_district,postition_name,person_status \n';
     sql_getAll_person += 'from pms_person \n';
     sql_getAll_person += 'left join pms_postion on pms_postion.postion_id = pms_person.person_position\n';
     sql_getAll_person += 'left join pms_prefix on pms_prefix.pf_id = pms_person.prefix_id \n';
+    // sql_getAll_person += 'where person_status = 1 \n';
     // sql_getAll_person += 'where person_id != 1';
 
 
@@ -324,9 +324,14 @@ exports.getAllPerson = (req, res) => {
 
 exports.getByIdPerson = (req, res) => {
     let sql_getById_person = '';
-    sql_getById_person = 'select person_id,person_username,person_password,prefix_id,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,person_province,person_amphur,person_district,person_position,person_status';
-    sql_getById_person = 'from pms_person ';
-    sql_getById_person = 'where person_id = ?'
+    sql_getById_person += 'select person_id,person_username,pf_name_abbr,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,ifs_provinces.name_th as province,ifs_amphures.name_th as amphures,ifs_districts.name_th as districts,ifs_districts.zip_code as zipcode,postition_name,person_status \n';
+    sql_getById_person += 'from pms_person \n';
+    sql_getById_person += 'left join pms_postion on pms_postion.postion_id = pms_person.person_position\n';
+    sql_getById_person += 'left join pms_prefix on pms_prefix.pf_id = pms_person.prefix_id \n';
+    sql_getById_person += 'left join ifs_districts on ifs_districts.id = pms_person.person_district \n';
+    sql_getById_person += 'left join ifs_amphures on ifs_amphures.id = pms_person.person_amphur \n';
+    sql_getById_person += 'left join ifs_provinces on ifs_provinces.id = pms_person.person_province \n';
+    sql_getById_person += 'where person_id = ? \n';
 
     try {
         dbConnect.query(sql_getById_person, [req.body.person_id], (err, results) => {
@@ -354,13 +359,49 @@ exports.getByIdPerson = (req, res) => {
     }
 }
 
+exports.getSystemByIdPerson = (req, res) => {
+    let sql_getSystemById_person = '';
+    sql_getSystemById_person += 'select pms_system.system_name_TH \n';
+    sql_getSystemById_person += 'from pms_person \n';
+    sql_getSystemById_person += 'left join pms_prepair on pms_prepair.person_id = pms_person.person_id\n';
+    sql_getSystemById_person += 'left join pms_access on pms_access.position_access_id = pms_prepair.position_access_id\n';
+    sql_getSystemById_person += 'left join pms_system on pms_system.system_id = pms_access.system_id\n';
+    sql_getSystemById_person += 'where pms_person.person_id = ? \n';
+    sql_getSystemById_person += 'group by pms_access.system_id \n';
+
+    try {
+        dbConnect.query(sql_getSystemById_person, [req.body.person_id], (err, results) => {
+            if (err) {
+                console.log(err);
+                res.json({
+                    status: false,
+                    message: 'getSystemById person fail',
+                    results: err
+                });
+            } else {
+                res.json({
+                    status: true,
+                    message: 'getSystemById person success',
+                    results: results
+                });
+            }
+        });
+    } catch (err) {
+        res.json({
+            status: false,
+            message: 'getSystemById person fail',
+            results: err
+        });
+    }
+}
+
 exports.insertPerson = (req, res) => {
     console.log(req.body)
     let sql_insert_person = '';
     sql_insert_person += 'insert into pms_person(person_username,prefix_id,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,person_province,person_amphur,person_district,person_position,person_status,person_create_by,person_create_date,person_update_by,person_update_date)';
     sql_insert_person += 'values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP(), ?, CURRENT_TIMESTAMP())'
     try {
-        dbConnect.query(sql_insert_person, [req.body.username_search + '@go.buu.ac.th', req.body.prefix, req.body.nameThai, req.body.lastnameThai, req.body.nameEng, req.body.lastnameEng, req.body.person_address, req.body.province_id, req.body.amphure_id, req.body.district_id, req.body.position_id, 1, req.body.create_by, req.body.create_by], (err, results) => {
+        dbConnect.query(sql_insert_person, [req.body.username_search + '@buu.ac.th', req.body.prefix, req.body.nameThai, req.body.lastnameThai, req.body.nameEng, req.body.lastnameEng, req.body.address, req.body.province_id, req.body.amphure_id, req.body.district_id, req.body.position_id, 1, req.body.create_by, req.body.create_by], (err, results) => {
             if (err) {
                 console.log(err)
             } else {
@@ -421,12 +462,12 @@ const insertPrepair = (value, callback) => {
 
 exports.updatePerson = (req, res) => {
     let sql_update_person = '';
-    sql_update_person = 'update pms_person '
-    sql_update_person = 'set prefix = ?, person_firstname_TH = ?, person_lastname_TH = ?, person_firstname_EN = ?, person_lastname_EN = ?, person_address = ?, person_province = ?, person_amphur = ?, person_district = ?, person_position = ?, person_status = ?, person_update_by = ? , person_update_date = CURRENT_TIMESTAMP() '
-    sql_update_person = 'where person_id = ? ';
+    sql_update_person += 'update pms_person '
+    sql_update_person += 'set prefix = ?, person_firstname_TH = ?, person_lastname_TH = ?, person_address = ?, person_province = ?, person_amphur = ?, person_district = ?, person_position = ?, person_status = ?, person_update_by = ? , person_update_date = CURRENT_TIMESTAMP() '
+    sql_update_person += 'where person_id = ? ';
 
     try {
-        dbConnect.query(sql_update_person, [req.body.prefix, req.body.prefix, req.body.person_firstname_TH, req.body.person_lastname_TH, req.body.person_firstname_EN, req.body.person_lastname_EN, req.body.person_address, req.body.person_province, req.body.person_amphur, req.body.person_district, req.body.person_position, req.body.person_status, req.body.person_update_by, req.body.person_id], (err, results) => {
+        dbConnect.query(sql_update_person, [req.body.prefix, req.body.prefix, req.body.person_firstname_EN, req.body.person_lastname_EN, req.body.person_address, req.body.person_province, req.body.person_amphur, req.body.person_district, req.body.person_position, req.body.person_status, req.body.person_update_by, req.body.person_id], (err, results) => {
             if (err) {
                 console.log(err);
                 res.json({
@@ -453,12 +494,41 @@ exports.updatePerson = (req, res) => {
 
 }
 
-exports.deletePerson = (req, res) => {
-    let sql_delete_person = '';
-    sql_delete_person = 'delete from pms_person where person_id = ?';
+exports.deletePrepair = (req, res) => {
+    let sql_delete_Prepair = '';
+    sql_delete_Prepair += 'delete from pms_prepair where person_id = ?';
 
     try {
-        dbConnect.query(sql_delete_person, [req.body.person_id], (err, result) => {
+        dbConnect.query(sql_delete_Prepair, [req.body.person_id], (err, results) => {
+            if (err) {
+                res.json({
+                    status: false,
+                    message: 'delete Prepair fail',
+                    results: err
+                });
+            } else {
+                res.json({
+                    status: true,
+                    message: 'delete Prepair success',
+                    results: results
+                });
+            }
+        })
+    } catch (err) {
+        res.json({
+            status: false,
+            message: 'delete Prepair fail',
+            results: err
+        });
+    }
+}
+
+exports.deletePerson = (req, res) => {
+    let sql_delete_person = '';
+    sql_delete_person += 'delete from pms_person where person_id = ?';
+
+    try {
+        dbConnect.query(sql_delete_person, [req.body.person_id], (err, results) => {
             if (err) {
                 res.json({
                     status: false,
@@ -469,7 +539,7 @@ exports.deletePerson = (req, res) => {
                 res.json({
                     status: true,
                     message: 'delete Person success',
-                    results: result
+                    results: results
                 });
             }
         })
@@ -481,7 +551,6 @@ exports.deletePerson = (req, res) => {
         });
     }
 }
-
 
 exports.getPrefixTh = (req, res) => {
     let sql_getPrefix_person = '';
@@ -640,7 +709,6 @@ exports.getProvinces = (req, res) => {
     }
 }
 
-
 exports.getPosition = (req, res) => {
     let sql_getPosition_person = '';
     sql_getPosition_person += 'select postion_id, postition_name\n';
@@ -698,6 +766,204 @@ exports.getPostionAccess = (req, res) => {
         res.json({
             status: false,
             message: 'getAll Postion_access fail',
+            results: err
+        });
+    }
+}
+
+exports.getPervinceId = (req, res) => {
+    let sql_getPervince_Id = '';
+    sql_getPervince_Id += 'select id,name_th \n';
+    sql_getPervince_Id += 'from ifs_provinces \n';
+    sql_getPervince_Id += 'where id = ? \n ';
+
+    // let sql_getPervince_person = '';
+    // sql_getPervince_person += 'select ifs_provinces.id ,ifs_provinces.name_th \n';
+    // sql_getPervince_person += 'from pms_person \n';
+    // sql_getPervince_person += 'left join ifs_provinces on ifs_provinces.id = pms_person.person_province\n';
+    // sql_getPervince_person += 'where pms_person.person_id = ? \n ';
+
+    try {
+        dbConnect.query(sql_getPervince_Id, [req.body.id], (err, results) => {
+            if (err) {
+                console.log(err);
+                res.json({
+                    status: false,
+                    message: 'get PervinceId fail',
+                    results: err
+                });
+            } else {
+                res.json({
+                    status: true,
+                    message: 'get PervinceId success',
+                    results: results
+                });
+            }
+        });
+    } catch (err) {
+        res.json({
+            status: false,
+            message: 'get PervinceId fail',
+            results: err
+        });
+    }
+}
+
+exports.getAmphureId = (req, res) => {
+    let sql_getAmphure_Id = '';
+    sql_getAmphure_Id += 'select id,name_th \n';
+    sql_getAmphure_Id += 'from ifs_amphures \n';
+    sql_getAmphure_Id += 'where id = ? \n ';
+
+    try {
+        dbConnect.query(sql_getAmphure_Id, [req.body.id], (err, results) => {
+            if (err) {
+                console.log(err);
+                res.json({
+                    status: false,
+                    message: 'get AmphureId fail',
+                    results: err
+                });
+            } else {
+                res.json({
+                    status: true,
+                    message: 'get AmphureId success',
+                    results: results
+                });
+            }
+        });
+    } catch (err) {
+        res.json({
+            status: false,
+            message: 'get AmphureId fail',
+            results: err
+        });
+    }
+}
+
+exports.getDistrictId = (req, res) => {
+    let sql_getDistrict_Id = '';
+    sql_getDistrict_Id += 'select id, zip_code, name_th \n';
+    sql_getDistrict_Id += 'from ifs_districts \n';
+    sql_getDistrict_Id += 'where id = ? \n ';
+
+    try {
+        dbConnect.query(sql_getDistrict_Id, [req.body.id], (err, results) => {
+            if (err) {
+                console.log(err);
+                res.json({
+                    status: false,
+                    message: 'get DistrictId fail',
+                    results: err
+                });
+            } else {
+                res.json({
+                    status: true,
+                    message: 'get DistrictId success',
+                    results: results
+                });
+            }
+        });
+    } catch (err) {
+        res.json({
+            status: false,
+            message: 'get DistrictId fail',
+            results: err
+        });
+    }
+}
+
+exports.getPrefixId = (req, res) => {
+    let sql_getPrefix_Id = '';
+    sql_getPrefix_Id += 'select pf_id,pf_name, pf_name_abbr \n';
+    sql_getPrefix_Id += 'from pms_prefix \n';
+    sql_getPrefix_Id += 'where pf_id = ? \n ';
+
+    try {
+        dbConnect.query(sql_getPrefix_Id, [req.body.pf_id], (err, results) => {
+            if (err) {
+                console.log(err);
+                res.json({
+                    status: false,
+                    message: 'get PrefixId fail',
+                    results: err
+                });
+            } else {
+                res.json({
+                    status: true,
+                    message: 'get PrefixId success',
+                    results: results
+                });
+            }
+        });
+    } catch (err) {
+        res.json({
+            status: false,
+            message: 'get PrefixId fail',
+            results: err
+        });
+    }
+}
+
+exports.getPositionId = (req, res) => {
+    let sql_getPosition_Id = '';
+    sql_getPosition_Id += 'select postion_id, postition_name \n';
+    sql_getPosition_Id += 'from pms_postion \n';
+    sql_getPosition_Id += 'where postion_id = ? \n ';
+
+    try {
+        dbConnect.query(sql_getPosition_Id, [req.body.postion_id], (err, results) => {
+            if (err) {
+                console.log(err);
+                res.json({
+                    status: false,
+                    message: 'get PositionId fail',
+                    results: err
+                });
+            } else {
+                res.json({
+                    status: true,
+                    message: 'get PositionId success',
+                    results: results
+                });
+            }
+        });
+    } catch (err) {
+        res.json({
+            status: false,
+            message: 'get PositionId fail',
+            results: err
+        });
+    }
+}
+
+exports.closePersonId = (req, res) => {
+    let sql_closePerson_Id = '';
+    sql_closePerson_Id += 'update pms_person \n';
+    sql_closePerson_Id += 'set person_status = if(person_status = 1,0,1) \n';
+    sql_closePerson_Id += 'where person_id = ? \n ';
+
+    try {
+        dbConnect.query(sql_closePerson_Id, [req.body.person_id], (err, results) => {
+            if (err) {
+                console.log(err);
+                res.json({
+                    status: false,
+                    message: 'closePersonId fail',
+                    results: err
+                });
+            } else {
+                res.json({
+                    status: true,
+                    message: 'closePersonId success',
+                    results: results
+                });
+            }
+        });
+    } catch (err) {
+        res.json({
+            status: false,
+            message: 'closePersonId fail',
             results: err
         });
     }
