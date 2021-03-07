@@ -10,6 +10,100 @@ exports.Add_schedule = (req, res) => {
 
   try {
     dbConnect.query(
+      sql_add_criteria,
+      [
+        req.body.schedule_name,
+        req.body.schedule_start_date,
+        req.body.schedule_per_credit,
+        req.body.schedule_general_min,
+        req.body.schedule_general_max,
+        req.body.schedule_create_by,
+        req.body.schedule_create_date,
+        req.body.schedule_create_by,
+        req.body.schedule_create_date,
+      ],
+      (err, results) => {
+        if (err) {
+          res.json({
+            status: false,
+            message: "sql_add_criteria fail",
+            results: err,
+          });
+        } else {
+          res.json({
+            status: true,
+            message: "sql_add_criteria sucesses",
+            results: results,
+          });
+        }
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.json({
+      status: false,
+      message: "Fail Add_criteria",
+      results: err,
+    });
+  }
+}),
+  // เพิ่ม Add_schedule_detail
+  (exports.Add_schedule_detail = (req, res) => {
+    let sql_add_schedule_detail =
+      "INSERT INTO wls_schedule_detail(schedule_id,schedule_detail_type,schedule_detail_subject,schedule_detail_bachelor,schedule_detail_graduate,schedule_detail_create_by,schedule_detail_create_date,schedule_detail_update_by,schedule_detail_update_date) ";
+    sql_add_schedule_detail += "VALUES (?,?,?,?,?,?,?,?,?)";
+
+    //  VALUES (1,0,1,20,50,"komsan",NOW(),"komsan",NOW())
+
+    try {
+      dbConnect.query(
+        sql_add_schedule_detail,
+        [
+          req.body.schedule_id,
+          req.body.schedule_detail_type,
+          req.body.schedule_detail_subject,
+          req.body.schedule_detail_bachelor,
+          req.body.schedule_detail_graduate,
+          req.body.schedule_detail_create_by,
+          req.body.schedule_detail_create_date,
+          req.body.schedule_detail_update_by,
+          req.body.schedule_detail_update_date,
+        ],
+        (err, results) => {
+          if (err) {
+            res.json({
+              status: false,
+              message: "sql_add_criteria fail",
+              results: err,
+            });
+          } else {
+            res.json({
+              status: true,
+              message: "sql_add_criteria_detail sucesses",
+              results: results,
+            });
+          }
+        }
+      );
+    } catch (err) {
+      console.log(err);
+      res.json({
+        status: false,
+        message: "Fail Add_criteria_detail",
+        results: err,
+      });
+    }
+  });
+
+// เพิ่ม Add_schedule_condition
+exports.Add_schedule_condition = (req, res) => {
+  let sql_add_schedule_condition =
+    "INSERT INTO wls_schedule_condition(schedule_condition_detail_id,schedule_condition_min,schedule_condition_max,schedule_condition_weight_per_credit)";
+  sql_add_schedule_condition += "VALUES (?,?,?,?)";
+  // VALUES (1,1,10,0.0015),(1,11,30,0.0015)
+
+  try {
+    dbConnect.query(
       sql_add_schedule_condition,
       [
         req.body.schedule_detail_id,
@@ -257,7 +351,7 @@ exports.Get_condition_by_schedule_detail_id = (req, res) => {
   }
 };
 
-// อัพเดทข้อมูล schedule ที่มีสถานะใช้งานอยู่ เพื่อเปลี่ยนสถานะก่อนการเพิ่ม  sssssssssss
+// อัพเดทข้อมูล schedule ที่มีสถานะใช้งานอยู่ เพื่อเปลี่ยนสถานะก่อนการเพิ่ม  szzz
 exports.Update_status_schedule = (req, res) => {
 
   // ดึงข้อมูล กำหนดการ
