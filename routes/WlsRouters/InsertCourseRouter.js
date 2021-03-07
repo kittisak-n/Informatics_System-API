@@ -22,4 +22,6 @@ router.post("/insertcourse", insertcourse.InsertCourseExcel);
 router.post("/getallcourse", insertcourse.get_all_course);
 router.post("/getcoursedetail", insertcourse.get_section_by_course_id);
 router.post("/changestatus", insertcourse.change_status_section);
-
+router.post("/getsubject", insertcourse.get_subject_by_person_id);
+router.post("/getsubjectunit", insertcourse.get_subject_unit_by_person_id);
+router.post("/editpersonsection", insertcourse.edit_person_section);

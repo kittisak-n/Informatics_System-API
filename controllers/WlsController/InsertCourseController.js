@@ -1,5 +1,97 @@
 const dbConnect = require("../../connectDB");
+exports.edit_person_section = (req, res) => {
+    let sql_edit_person_section = ""
+    sql_edit_person_section = `UPDATE wls_section_person as person
+    SET  person.section_person_unit = ? , person.section_person_lecture_unit = ? , person.section_person_lab_unit = ? , person.section_person_learning_unit = ? 
+    WHERE person.person_id = ? AND person.section_id = ?`
 
+    try {
+        dbConnect.query(sql_edit_person_section, [req.body.unit, req.body.lecture_unit, req.body.lab_unit, req.body.learning_unit, req.body.person_id, req.body.section_id], (err, results) => {
+            if (err) {
+                res.json({
+                    status: false,
+                    message: "edit unit Fail",
+                    results: err,
+                });
+                throw (err)
+            } else {
+                res.json({
+                    status: true,
+                });
+            }
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
+exports.get_subject_unit_by_person_id = (req, res) => {
+    console.log("person", req.body.person_id)
+
+    let sql_get_subject_unit_by_person_id = "";
+    sql_get_subject_unit_by_person_id = `SELECT section.section_id , person.person_id , 
+    person.section_person_unit , person.section_person_lecture_unit , person.section_person_lab_unit ,person.section_person_learning_unit 
+    FROM wls_section_person AS person
+    LEFT JOIN wls_section AS section
+    ON person.section_id = section.section_id
+    WHERE person.person_id = ? AND section.section_id = ?`
+    try {
+        dbConnect.query(sql_get_subject_unit_by_person_id, [req.body.person_id, req.body.section_id], (err, results) => {
+            if (err) {
+                res.json({
+                    status: false,
+                    message: "Get Subject Fail",
+                    results: err,
+                });
+                throw (err)
+            } else {
+                res.json({
+                    status: true,
+                    message: "Get Subject",
+                    results: results,
+                });
+            }
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
+exports.get_subject_by_person_id = (req, res) => {
+    console.log(req.body.person_id)
+    let sql_get_subject_by_person_id = "";
+    sql_get_subject_by_person_id = `SELECT section.section_id , section.section_number , 
+    section.section_name , person.person_id , 
+    person.section_person_unit , person.section_person_lecture_unit , 
+    person.section_person_lab_unit ,person.section_person_learning_unit , 
+    course.course_code , course.course_name
+    FROM wls_section_person AS person
+    LEFT JOIN wls_section AS section
+    ON person.section_id = section.section_id
+    LEFT JOIN wls_course AS course
+    ON section.section_course_id = course.course_id
+    WHERE person.person_id = ? AND section.section_status = 1`
+
+    try {
+        dbConnect.query(sql_get_subject_by_person_id, [req.body.person_id], (err, results) => {
+            if (err) {
+                res.json({
+                    status: false,
+                    message: "Get Subject Fail",
+                    results: err,
+                });
+                throw (err)
+            } else {
+                res.json({
+                    status: true,
+                    message: "Get Subject",
+                    results: results,
+                });
+            }
+        })
+    } catch (error) {
+        console.log(error)
+    }
+
+}
 exports.get_all_course = (req, res) => {
     let sql_get_all_course = "";
     sql_get_all_course += `SELECT * FROM wls_course `
@@ -39,7 +131,6 @@ exports.change_status_section = (req, res) => {
     try {
         console.log("Section ID :", req.body.section_id)
         dbConnect.query(change_section_status, [req.body.section_id], (err, results) => {
-
         })
     } catch (error) {
         console.log(error)
@@ -78,26 +169,22 @@ exports.InsertCourseExcel = (req, res) => {
                         ele.course_id = results[0].course_id
                         getCountSectionDuplicate(ele, function (results) {
                             console.log("Count Sectoion :", results[0].count_section)
-                            if (results[0].count_section == 0) {
-                                InsertSection(ele, req.body.course_term, req.body.course_year, function (results) {
-                                    ele.date.forEach(function (ele) {
-                                        ele.section_id = results;
-                                        InsertSectionDetail(ele, function (results) {
-                                            console.log(results);
-                                        })
-                                        getPersonId(ele, function (results) {
-                                            console.log("Person : ", results);
-                                            ele.course_person = results[0].person_id
-                                            ele.course_person_position = results[0].person_position
-                                            InsertSectionPserson(ele, function (results) {
-                                                console.log(index)
-                                            })
+                            InsertSection(ele, req.body.course_term, req.body.course_year, function (results) {
+                                ele.date.forEach(function (ele) {
+                                    ele.section_id = results;
+                                    InsertSectionDetail(ele, function (results) {
+                                        console.log(results);
+                                    })
+                                    getPersonId(ele, function (results) {
+                                        console.log("Person : ", results);
+                                        ele.course_person = results[0].person_id
+                                        ele.course_person_position = results[0].person_position
+                                        InsertSectionPserson(ele, function (results) {
+                                            console.log(index)
                                         })
                                     })
                                 })
-                            } else {
-                                console.log("Count Sectoion Duplicate")
-                            }
+                            })
                         })
                     })
                 }
