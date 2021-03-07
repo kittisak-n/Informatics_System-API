@@ -48,13 +48,14 @@ exports.change_status_section = (req, res) => {
 exports.InsertCourseExcel = (req, res) => {
     // Check Section ซ้ำ ก่อน Insert
     try {
-        req.body.course.forEach(ele => {
+        req.body.course.forEach(function (ele, index) {
+
             getCourseId(ele.course_code, function (result) {
                 if (result.length === 0) {
                     console.log('insert');
                     InsertCourse(ele, function (result) {
                         ele.course_id = result
-                        InsertSection(ele,req.body.course_term, req.body.course_year, function (result) {
+                        InsertSection(ele, req.body.course_term, req.body.course_year, function (result) {
                             ele.date.forEach(function (ele) {
                                 ele.section_id = result;
                                 InsertSectionDetail(ele, function (results) {
@@ -65,7 +66,7 @@ exports.InsertCourseExcel = (req, res) => {
                                     ele.course_person = results[0].person_id
                                     ele.course_person_position = results[0].person_position
                                     InsertSectionPserson(ele, function (results) {
-                                        console.log(results);
+
                                     })
                                 })
                             })
@@ -78,7 +79,7 @@ exports.InsertCourseExcel = (req, res) => {
                         getCountSectionDuplicate(ele, function (results) {
                             console.log("Count Sectoion :", results[0].count_section)
                             if (results[0].count_section == 0) {
-                                InsertSection(ele,req.body.course_term, req.body.course_year, function (results) {
+                                InsertSection(ele, req.body.course_term, req.body.course_year, function (results) {
                                     ele.date.forEach(function (ele) {
                                         ele.section_id = results;
                                         InsertSectionDetail(ele, function (results) {
@@ -89,7 +90,7 @@ exports.InsertCourseExcel = (req, res) => {
                                             ele.course_person = results[0].person_id
                                             ele.course_person_position = results[0].person_position
                                             InsertSectionPserson(ele, function (results) {
-                                                console.log(results);
+                                                console.log(index)
                                             })
                                         })
                                     })
@@ -235,10 +236,6 @@ const InsertSection = (ele, section_term, section_year, callback) => {
         section_number,
         section_name,
         section_student,
-        section_unit,
-        section_lecture_unit,
-        section_lab_unit,
-        section_learning_unit,
         section_term,
         section_year,
         section_status, 
@@ -246,7 +243,7 @@ const InsertSection = (ele, section_term, section_year, callback) => {
         section_create_date, 
         section_update_by, 
         section_update_date)`
-    sql_insert_section += `VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+    sql_insert_section += `VALUES(?,?,?,?,?,?,?,?,?,?,?)`
 
     try {
         dbConnect.query(sql_insert_section, [
@@ -254,10 +251,6 @@ const InsertSection = (ele, section_term, section_year, callback) => {
             ele.section_number,
             ele.section_detail,
             ele.section_student,
-            ele.section_unit, //section_unit
-            ele.section_lac_unit, //section_lactrue_unit
-            ele.section_lab_unit, //section_lab_unit
-            ele.section_self_unit, //section_learning_unit
             section_term, //section_term
             section_year, //section_year
             1, //section_status
@@ -323,29 +316,42 @@ async function InsertSectionPserson(ele, callback) {
     sql_insert_section_person += `INSERT INTO wls_section_person(section_id, 
         person_id, 
         person_postion_id,
+        section_person_unit,
+        section_person_lecture_unit,
+        section_person_lab_unit,
+        section_person_learning_unit,
         section_person_create_by,
         section_person_create_date, 
         section_person_update_id, 
         section_person_update_date)`
-    sql_insert_section_person += `VALUES(?,?,?,?,?,?,?)`
+    sql_insert_section_person += `VALUES(?,?,?,?,?,?,?,?,?,?,?)`
 
-    dbConnect.query(sql_insert_section_person, [
-        ele.section_id,
-        ele.course_person, //person id
-        ele.person_position, //person_postion_id
-        1, //section_person_create_by
-        new Date(), //section_person_create_date
-        1, //section_person_update_id
-        new Date(), //section_person_update_date
-    ], (err, results) => {
-        if (err) {
-            throw err
-        }
-        else {
-            console.log("Insert Complete")
-            callback(true)
-        }
-    })
+    try {
+        dbConnect.query(sql_insert_section_person, [
+            ele.section_id,
+            ele.course_person, //person id
+            ele.person_position, //person_postion_id
+            0,
+            0,
+            0,
+            0,
+            1, //section_person_create_by
+            new Date(), //section_person_create_date
+            1, //section_person_update_id
+            new Date(), //section_person_update_date
+        ], (err, results) => {
+            if (err) {
+                throw err
+            }
+            else {
+                console.log("Insert Complete")
+                callback(true)
+            }
+        })
+    } catch (error) {
+        callback(error)
+    }
+
 }
 const get_section = (value, callback) => {
     console.log(value);
