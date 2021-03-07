@@ -23,4 +23,3 @@ router.post("/get_summary", summary.Get_person_by_id);
 
 
 
-module.exports = router;
