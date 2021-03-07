@@ -40,7 +40,7 @@ exports.get_summary =  (req, res) => {
   sql_get_summary +=
     "LEFT JOIN wls_schedule ON wls_summary.schedule_id = wls_schedule.schedule_id\n";
   sql_get_summary +=
-    "LEFT JOIN pms_person ON wls_summary.person_id = wls_summary.person_id\n";
+    "LEFT JOIN pms_person ON wls_summary.person_id = pms_person.person_id\n";
     sql_get_summary +=
     "LEFT JOIN pms_postion ON pms_person.person_position = pms_postion.position_id\n";
     
