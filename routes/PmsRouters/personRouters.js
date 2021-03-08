@@ -33,6 +33,7 @@ router.post("/getSystemByIdPerson", personController.getSystemByIdPerson);
 router.post("/insertPerson", personController.insertPerson);
 router.post("/updatePerson", personController.updatePerson);
 router.post("/closePersonId", personController.closePersonId);
+router.post("/changeStatusPositionAccess", personController.changeStatusPositionAccess);
 
 router.post("/deletePerson", personController.deletePerson);
 router.post("/deletePrepair", personController.deletePrepair);
@@ -42,5 +43,8 @@ router.post("/getAmphureId", personController.getAmphureId);
 router.post("/getDistrictId", personController.getDistrictId);
 router.post("/getPrefixId", personController.getPrefixId);
 router.post("/getPositionId", personController.getPositionId);
+router.post("/getPositionName", personController.getPositionName);
+router.post("/getPostionAccessById", personController.getPostionAccessById);
+router.post("/updatePosition", personController.updatePosition);
 
 module.exports = router;

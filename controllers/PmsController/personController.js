@@ -281,8 +281,9 @@ exports.getAllPerson = (req, res) => {
     sql_getAll_person += 'from pms_person \n';
     sql_getAll_person += 'left join pms_postion on pms_postion.postion_id = pms_person.person_position\n';
     sql_getAll_person += 'left join pms_prefix on pms_prefix.pf_id = pms_person.prefix_id \n';
+    sql_getAll_person += 'where person_id != 1';
     // sql_getAll_person += 'where person_status = 1 \n';
-    // sql_getAll_person += 'where person_id != 1';
+
 
 
     // let sql_getPosition_person = '';
@@ -324,7 +325,7 @@ exports.getAllPerson = (req, res) => {
 
 exports.getByIdPerson = (req, res) => {
     let sql_getById_person = '';
-    sql_getById_person += 'select person_id,person_username,pf_name_abbr,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,ifs_provinces.name_th as province,ifs_amphures.name_th as amphures,ifs_districts.name_th as districts,ifs_districts.zip_code as zipcode,postition_name,person_status \n';
+    sql_getById_person += 'select person_id,person_username,pf_name_abbr,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,ifs_provinces.name_th as province,ifs_amphures.name_th as amphures,ifs_districts.name_th as districts,ifs_districts.zip_code as zipcode,postition_name,person_status,prefix_id,person_province,person_amphur,person_district,person_position \n';
     sql_getById_person += 'from pms_person \n';
     sql_getById_person += 'left join pms_postion on pms_postion.postion_id = pms_person.person_position\n';
     sql_getById_person += 'left join pms_prefix on pms_prefix.pf_id = pms_person.prefix_id \n';
@@ -396,12 +397,12 @@ exports.getSystemByIdPerson = (req, res) => {
 }
 
 exports.insertPerson = (req, res) => {
-    console.log(req.body)
+
     let sql_insert_person = '';
     sql_insert_person += 'insert into pms_person(person_username,prefix_id,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,person_province,person_amphur,person_district,person_position,person_status,person_create_by,person_create_date,person_update_by,person_update_date)';
     sql_insert_person += 'values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP(), ?, CURRENT_TIMESTAMP())'
     try {
-        dbConnect.query(sql_insert_person, [req.body.username_search + '@buu.ac.th', req.body.prefix, req.body.nameThai, req.body.lastnameThai, req.body.nameEng, req.body.lastnameEng, req.body.address, req.body.province_id, req.body.amphure_id, req.body.district_id, req.body.position_id, 1, req.body.create_by, req.body.create_by], (err, results) => {
+        dbConnect.query(sql_insert_person, [req.body.username_search + '@buu.ac.th', req.body.prefix_id, req.body.nameThai, req.body.lastnameThai, req.body.nameEng, req.body.lastnameEng, req.body.address, req.body.province_id, req.body.amphure_id, req.body.district_id, req.body.position_id, 1, req.body.create_by, req.body.create_by], (err, results) => {
             if (err) {
                 console.log(err)
             } else {
@@ -463,11 +464,10 @@ const insertPrepair = (value, callback) => {
 exports.updatePerson = (req, res) => {
     let sql_update_person = '';
     sql_update_person += 'update pms_person '
-    sql_update_person += 'set prefix = ?, person_firstname_TH = ?, person_lastname_TH = ?, person_address = ?, person_province = ?, person_amphur = ?, person_district = ?, person_position = ?, person_status = ?, person_update_by = ? , person_update_date = CURRENT_TIMESTAMP() '
+    sql_update_person += 'set prefix_id = ?, person_firstname_TH = ?, person_lastname_TH = ?, person_address = ?, person_province = ?, person_amphur = ?, person_district = ?, person_position = ?, person_update_by = ? , person_update_date = CURRENT_TIMESTAMP() '
     sql_update_person += 'where person_id = ? ';
-
     try {
-        dbConnect.query(sql_update_person, [req.body.prefix, req.body.prefix, req.body.person_firstname_EN, req.body.person_lastname_EN, req.body.person_address, req.body.person_province, req.body.person_amphur, req.body.person_district, req.body.person_position, req.body.person_status, req.body.person_update_by, req.body.person_id], (err, results) => {
+        dbConnect.query(sql_update_person, [req.body.prefix_id, req.body.nameThai, req.body.lastnameThai, req.body.address, req.body.province_id, req.body.amphure_id, req.body.district_id, req.body.position_id, req.body.person_update_by, req.body.person_id], (err, results) => {
             if (err) {
                 console.log(err);
                 res.json({
@@ -490,8 +490,6 @@ exports.updatePerson = (req, res) => {
             results: err
         });
     }
-
-
 }
 
 exports.deletePrepair = (req, res) => {
@@ -964,6 +962,186 @@ exports.closePersonId = (req, res) => {
         res.json({
             status: false,
             message: 'closePersonId fail',
+            results: err
+        });
+    }
+}
+
+exports.changeStatusPositionAccess = (req, res) => {
+    let sql_changeStatusPositionAccess = '';
+    sql_changeStatusPositionAccess += 'update pms_prepair \n';
+    sql_changeStatusPositionAccess += 'set prepair_status = if(prepair_status = 1,0,1) \n';
+    sql_changeStatusPositionAccess += 'where person_id = ? \n ';
+
+    try {
+        dbConnect.query(sql_changeStatusPositionAccess, [req.body.person_id], (err, results) => {
+            if (err) {
+                console.log(err);
+                res.json({
+                    status: false,
+                    message: 'changeStatusPositionAccess fail',
+                    results: err
+                });
+            } else {
+                res.json({
+                    status: true,
+                    message: 'changeStatusPositionAccess success',
+                    results: results
+                });
+            }
+        });
+    } catch (err) {
+        res.json({
+            status: false,
+            message: 'changeStatusPositionAccess fail',
+            results: err
+        });
+    }
+}
+
+exports.getPositionName = (req, res) => {
+    try {
+        getsysnameName(req.body, function (result) {
+            if (result) {
+                let results = [];
+                result.forEach(function (ele, index) {
+                    let data = {
+                        position_access_id: req.body.position_access_id,
+                        system_id: ele.system_id,
+                    }
+                    if (index === result.length - 1) {
+                        getsubPositionName(data, function (result) {
+                            results.push({
+                                system_id: ele.system_id,
+                                system_name: ele.system_name_TH,
+                                sub_system: result
+                            })
+                            res.json({
+                                stats: true,
+                                results: results
+                            })
+                        })
+                    } else {
+                        getsubPositionName(data, function (result) {
+                            results.push({
+                                system_id: ele.system_id,
+                                system_name: ele.system_name_TH,
+                                sub_system: result
+                            })
+                        })
+                    }
+                })
+            } else {
+                throw new error();
+            }
+        })
+    } catch (error) {
+        res.json({
+            stats: true,
+            massage: 'error'
+        })
+    }
+}
+
+const getsysnameName = (value, callback) => {
+    let sql = '';
+    sql += 'select pms_system.system_id , pms_system.system_name_TH \n';
+    sql += 'from pms_access \n';
+    sql += 'left join pms_system on pms_system.system_id = pms_access.system_id \n';
+    sql += 'where pms_access.position_access_id = ? \n ';
+    sql += 'group by pms_system.system_id'
+    try {
+        dbConnect.query(sql, [value.position_access_id], (err, result) => {
+            if (err) {
+                throw err
+            } else {
+                callback(result)
+            }
+        })
+    } catch (error) {
+        callback(false)
+    }
+}
+
+const getsubPositionName = (value, callback) => {
+    let sql = '';
+    sql += 'select pms_sub_system.sub_system_id, pms_sub_system.sub_system_name_TH \n';
+    sql += 'from pms_access \n';
+    sql += 'left join pms_sub_system on pms_sub_system.sub_system_id = pms_access.sub_system_id\n';
+    sql += 'where pms_access.position_access_id = ? and pms_access.system_id = ? \n ';
+    try {
+        dbConnect.query(sql, [value.position_access_id, value.system_id], (err, result) => {
+            if (err) {
+                throw err;
+            } else {
+                callback(result)
+            }
+        })
+    } catch (error) {
+        callback(false)
+    }
+}
+
+exports.getPostionAccessById = (req, res) => {
+    let sql_getPostionAcces_Id = '';
+    sql_getPostionAcces_Id += 'select postion_access_id, postion_access_name_TH ,pms_person.person_id as person_id,pms_prepair.prepair_status as prepair_status\n';
+    sql_getPostionAcces_Id += 'from pms_prepair \n';
+    sql_getPostionAcces_Id += 'left join pms_postion_access on pms_postion_access.postion_access_id = pms_prepair.position_access_id \n';
+    sql_getPostionAcces_Id += 'left join pms_person on pms_person.person_id = pms_prepair.person_id \n';
+    sql_getPostionAcces_Id += 'where pms_person.person_id =  ? \n ';
+
+    try {
+        dbConnect.query(sql_getPostionAcces_Id, [req.body.person_id], (err, results) => {
+            if (err) {
+                console.log(err);
+                res.json({
+                    status: false,
+                    message: 'get PostionAccessId fail',
+                    results: err
+                });
+            } else {
+                res.json({
+                    status: true,
+                    message: 'get PostionAccessId success',
+                    results: results
+                });
+            }
+        });
+    } catch (err) {
+        res.json({
+            status: false,
+            message: 'get PostionAccessId fail',
+            results: err
+        });
+    }
+}
+
+exports.updatePosition = (req, res) => {
+    let sql_update_position = '';
+    sql_update_position += 'update pms_prepair '
+    sql_update_position += 'set position_access_id = ? , prepair_update_by = CURRENT_TIMESTAMP() '
+    sql_update_position += 'where person_id = ? ';
+    try {
+        dbConnect.query(sql_update_position, [req.body.position_access_id, req.body.person_id], (err, results) => {
+            if (err) {
+                console.log(err);
+                res.json({
+                    status: false,
+                    message: 'update position fail',
+                    results: err
+                });
+            } else {
+                res.json({
+                    status: true,
+                    message: 'update position success',
+                    results: results
+                });
+            }
+        });
+    } catch (err) {
+        res.json({
+            status: false,
+            message: 'update position fail',
             results: err
         });
     }
