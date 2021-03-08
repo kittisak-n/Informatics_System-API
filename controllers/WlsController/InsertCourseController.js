@@ -175,23 +175,23 @@ exports.InsertCourseExcel = (req, res) => {
                         course.course_section.forEach(function (section, index) {
                             getCountSectionDuplicate(course.course_id, section.section_number, function (results) {
                                 console.log("Count Sectoion :", results[0].count_section) // Check count section
-                                if (results[0].count_section == 0) { // Add New section
-                                    InsertSection(section, course.course_id, req.body.course_term, req.body.course_year, function (results) {
-                                        section.section_id = results
-                                        section.section_date.forEach(function (section_date, index) {
-                                            InsertSectionDetail(section_date, section.section_id, function (results) {
-                                                getPersonId(section_date, function (results) {
-                                                    console.log(results);
-                                                    section_date.course_person = results[0].person_id
-                                                    section_date.course_person_position = results[0].person_position
-                                                    InsertSectionPserson(section_date, section.section_id, function (results) {
+                                // if (results[0].count_section == 0) { // Add New section
+                                InsertSection(section, course.course_id, req.body.course_term, req.body.course_year, function (results) {
+                                    section.section_id = results
+                                    section.section_date.forEach(function (section_date, index) {
+                                        InsertSectionDetail(section_date, section.section_id, function (results) {
+                                            getPersonId(section_date, function (results) {
+                                                console.log(results);
+                                                section_date.course_person = results[0].person_id
+                                                section_date.course_person_position = results[0].person_position
+                                                InsertSectionPserson(section_date, section.section_id, function (results) {
 
-                                                    })
                                                 })
                                             })
                                         })
                                     })
-                                }
+                                })
+                                // }
                             })
                         })
 
