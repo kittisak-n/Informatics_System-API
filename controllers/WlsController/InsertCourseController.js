@@ -1,4 +1,68 @@
 const dbConnect = require("../../connectDB");
+
+exports.edit_section_detail = (req, res) => {
+    let sql_edit_section_detail = "";
+    sql_edit_section_detail = `UPDATE wls_section_detail
+    SET section_detail_day = ?, section_detail_start_time = ?, section_detail_end_time = ? , section_detail_room = ?
+    WHERE section_detail_id = ?`
+    console.log(req.body.section_detail_day)
+    try {
+        dbConnect.query(sql_edit_section_detail,
+            [
+                req.body.section_detail_day,
+                req.body.section_detail_start_time,
+                req.body.section_detail_end_time,
+                req.body.section_detail_room,
+                req.body.section_detail_id,
+            ], (err, results) => {
+                if (err) {
+                    res.json({
+                        status: false,
+                        message: "Edit Section Detail Fail",
+                        results: err,
+                    });
+                    throw (err)
+                } else {
+                    res.json({
+                        status: true,
+                        message: "Edit Section Detail Fail",
+                    });
+                }
+            })
+    } catch (error) {
+        return error
+    }
+}
+exports.get_section_detail_by_id = (req, res) => {
+    console.log("Detail id", req.body.section_detail_id)
+    let sql_get_section_detail_by_id = "";
+    sql_get_section_detail_by_id = `SELECT detail.section_detail_id , detail.section_detail_day ,
+    detail.section_detail_start_time , detail.section_detail_end_time ,detail.section_detail_room
+    FROM wls_section_detail AS detail 
+    WHERE detail.section_detail_id = ?`
+
+    try {
+        dbConnect.query(sql_get_section_detail_by_id, [req.body.section_detail_id], (err, results) => {
+            if (err) {
+                res.json({
+                    status: false,
+                    message: "Get Section Detail By Detail ID Fail",
+                    results: err,
+                });
+                throw (err)
+            } else {
+                res.json({
+                    status: true,
+                    message: "Get Section Detail By Detail ID Success",
+                    results: results,
+                });
+            }
+        })
+    } catch (error) {
+        return error
+    }
+}
+
 exports.edit_person_section = (req, res) => {
     let sql_edit_person_section = ""
     sql_edit_person_section = `UPDATE wls_section_person as person
@@ -10,7 +74,7 @@ exports.edit_person_section = (req, res) => {
             if (err) {
                 res.json({
                     status: false,
-                    message: "edit unit Fail",
+                    message: "Edit Person Fail",
                     results: err,
                 });
                 throw (err)
@@ -46,7 +110,7 @@ exports.get_subject_unit_by_person_id = (req, res) => {
             } else {
                 res.json({
                     status: true,
-                    message: "Get Subject",
+                    message: "Get Subject Success",
                     results: results,
                 });
             }
@@ -71,20 +135,19 @@ exports.get_subject_by_person_id = (req, res) => {
     WHERE person.person_id = ? AND section.section_status = 1
     GROUP BY section.section_number `
 
-
     try {
         dbConnect.query(sql_get_subject_by_person_id, [req.body.person_id], (err, results) => {
             if (err) {
                 res.json({
                     status: false,
-                    message: "Get Subject Fail",
+                    message: "Get Subject By person ID Fail",
                     results: err,
                 });
                 throw (err)
             } else {
                 res.json({
                     status: true,
-                    message: "Get Subject",
+                    message: "Get Subject By person ID Subject Success",
                     results: results,
                 });
             }
@@ -102,13 +165,13 @@ exports.get_all_course = (req, res) => {
         if (err) {
             res.json({
                 status: false,
-                message: "Get Fail",
+                message: "Get All Course Fail",
                 results: err,
             });
         } else {
             res.json({
                 status: true,
-                message: "Get Success",
+                message: "Get All Course Success",
                 results: results
             });
         }
@@ -149,17 +212,16 @@ exports.InsertCourseExcel = (req, res) => {
                 if (results.length === 0) {
                     InsertCourse(course, function (results) {
                         course.course_id = results;
-                        // console.log(course.course_section)
                         course.course_section.forEach(function (section, index) {
                             InsertSection(section, course.course_id, req.body.course_term, req.body.course_year, function (results) {
                                 section.section_id = results
                                 section.section_date.forEach(function (section_date, index) {
-                                    InsertSectionDetail(section_date, section.section_id, function (results) {
+                                    InsertSectionDetail(section_date, section.section_id, function (resultsDetail) {
                                         getPersonId(section_date, function (results) {
                                             console.log(results);
                                             section_date.course_person = results[0].person_id
                                             section_date.course_person_position = results[0].person_position
-                                            InsertSectionPserson(section_date, section.section_id, function (results) {
+                                            InsertSectionPserson(section_date, section.section_id, resultsDetail, function (results) {
 
                                             })
                                         })
@@ -173,28 +235,52 @@ exports.InsertCourseExcel = (req, res) => {
                     getCourseId(course.course_code, function (results) {
                         course.course_id = results[0].course_id
                         course.course_section.forEach(function (section, index) {
-                            getCountSectionDuplicate(course.course_id, section.section_number, function (results) {
-                                console.log("Count Sectoion :", results[0].count_section) // Check count section
-                                // if (results[0].count_section == 0) { // Add New section
-                                InsertSection(section, course.course_id, req.body.course_term, req.body.course_year, function (results) {
-                                    section.section_id = results
-                                    section.section_date.forEach(function (section_date, index) {
-                                        InsertSectionDetail(section_date, section.section_id, function (results) {
-                                            getPersonId(section_date, function (results) {
-                                                console.log(results);
-                                                section_date.course_person = results[0].person_id
-                                                section_date.course_person_position = results[0].person_position
-                                                InsertSectionPserson(section_date, section.section_id, function (results) {
-
+                            getSectionDuplicate(course.course_id, section.section_number, req.body.course_term, req.body.course_year, function (results) {
+                                // console.log(results)
+                                if (results.length === 0) { // Add New section
+                                    InsertSection(section, course.course_id, req.body.course_term, req.body.course_year, function (results) {
+                                        section.section_id = results
+                                        section.section_date.forEach(function (section_date, index) {
+                                            InsertSectionDetail(section_date, section.section_id, function (resultsDetail) {
+                                                getPersonId(section_date, function (results) {
+                                                    console.log(results);
+                                                    section_date.course_person = results[0].person_id
+                                                    section_date.course_person_position = results[0].person_position
+                                                    InsertSectionPserson(section_date, section.section_id, resultsDetail, function (results) {
+                                                    })
                                                 })
                                             })
                                         })
                                     })
-                                })
-                                // }
+                                } else {
+                                    console.log("section", section)
+                                    console.log("course_id", course.course_id)
+                                    console.log("term", req.body.course_term)
+                                    console.log("year", req.body.course_year)
+
+                                    getSectionId(section, course.course_id, req.body.course_term, req.body.course_year, function (resultsSectiondetail) {
+                                        console.log("Section : ", resultsSectiondetail[0].section_id)
+                                        section.section_date.forEach(function (section_date, index) {
+                                            getPersonId(section_date, function (results) {
+                                                section_date.course_person = results[0].person_id
+                                                get_check_section_detail(section_date, resultsSectiondetail[0].section_id, function (result) {
+                                                    if (result.length == 0) {
+                                                        console.log("New detail")
+                                                        InsertSectionDetail(section_date, resultsSectiondetail[0].section_id, function (resultsDetail) {
+                                                            InsertSectionPserson(section_date, resultsSectiondetail[0].section_id, resultsDetail, function (results) {
+
+                                                            })
+                                                        })
+                                                    } else {
+                                                        console.log("same detail")
+                                                    }
+                                                })
+                                            })
+                                        })
+                                    })
+                                }
                             })
                         })
-
                     })
                 }
             })
@@ -209,7 +295,8 @@ const getCourseId = (value, callback) => {
     console.log(value);
     //Check Course ซ้ำ ก่อน Insert
     let sqlGetCourseId = "";
-    sqlGetCourseId += `SELECT course_id FROM wls_course WHERE course_code = ?`;
+    sqlGetCourseId += `SELECT course_id 
+    FROM wls_course WHERE course_code = ?`;
     try {
         dbConnect.query(sqlGetCourseId, [value], function (err, results) {
             if (err) {
@@ -224,14 +311,15 @@ const getCourseId = (value, callback) => {
 }
 async function getPersonId(value, callback) {
     let sql_get_person = "";
-    sql_get_person += `SELECT person_id , person_position FROM pms_person WHERE person_username  = ?`;
+    sql_get_person += `SELECT person_id , person_position 
+    FROM pms_person WHERE person_username  = ?`;
 
     try {
         dbConnect.query(sql_get_person, value.course_person, function (err, results) {
             if (err) {
                 res.json({
                     status: false,
-                    message: "Get Person Fail",
+                    message: "Get Person ID Fail",
                     results: err,
                 });
                 throw (err)
@@ -243,16 +331,18 @@ async function getPersonId(value, callback) {
         callback(false)
     }
 }
-async function getCountSectionDuplicate(course_id, section_number, callback) {
+async function getSectionDuplicate(course_id, section_number, term, year, callback) {
     let sql_get_id_section = "";
-    sql_get_id_section += `SELECT COUNT(section_course_id) as count_section FROM wls_section WHERE section_course_id  = ? AND section_number = ?`;
+    sql_get_id_section += `SELECT section_id,section_course_id ,section_number , section_term , section_year
+    FROM wls_section 
+    WHERE section_course_id  = ? AND section_number = ? AND section_term = ? AND section_year = ? AND section_status = 1`;
 
     try {
-        dbConnect.query(sql_get_id_section, [course_id, section_number], function (err, results) {
+        dbConnect.query(sql_get_id_section, [course_id, section_number, term, year], function (err, results) {
             if (err) {
                 res.json({
                     status: false,
-                    message: "Get course Fail",
+                    message: "Get Section Duplicate Fail",
                     results: err,
                 });
                 throw (err)
@@ -264,20 +354,27 @@ async function getCountSectionDuplicate(course_id, section_number, callback) {
         callback(false)
     }
 }
-async function getSectionId(value, callback) {
-    //Get Section ID
+const getSectionId = (value, course, term, year, callback) => {
     let sql_get_id_section = "";
-    sql_get_id_section += `SELECT section_id FROM wls_section WHERE section_number = ?`;
-
-    dbConnect.query(sql_get_id_section, course.กลุ่ม, function (err, result) {
-        if (err) {
-            res.json({
-                status: false,
-                message: "Get course Fail",
-                results: err,
-            });
-        } else { }
-    })
+    sql_get_id_section += `SELECT section_id , section_number
+    FROM wls_section 
+    WHERE section_course_id = ? AND section_number = ? AND section_term = ? AND section_year = ? AND section_status = 1`;
+    try {
+        dbConnect.query(sql_get_id_section, [course, value.section_number, term, year], function (err, result) {
+            if (err) {
+                res.json({
+                    status: false,
+                    message: "Get Section ID Fail",
+                    results: err,
+                });
+                throw (err)
+            } else {
+                callback(result)
+            }
+        })
+    } catch (error) {
+        callback(error)
+    }
 }
 
 
@@ -405,12 +502,13 @@ async function InsertSectionDetail(ele, section_id, callback) {
 
 }
 
-async function InsertSectionPserson(ele, section_id, callback) {
+async function InsertSectionPserson(ele, section_id, detail_id, callback) {
 
     //Insert Section Person
     let sql_insert_section_person = "";
     sql_insert_section_person += `INSERT INTO wls_section_person(section_id, 
-        person_id, 
+        section_person_detail_id ,
+        person_id,
         person_postion_id,
         section_person_unit,
         section_person_lecture_unit,
@@ -420,11 +518,12 @@ async function InsertSectionPserson(ele, section_id, callback) {
         section_person_create_date, 
         section_person_update_id, 
         section_person_update_date)`
-    sql_insert_section_person += `VALUES(?,?,?,?,?,?,?,?,?,?,?)`
+    sql_insert_section_person += `VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`
 
     try {
         dbConnect.query(sql_insert_section_person, [
             section_id,
+            detail_id,
             ele.course_person, //person id
             ele.person_position, //person_postion_id
             0,
@@ -500,9 +599,17 @@ const get_section = (value, callback) => {
 }
 const get_section_detail = (value, callback) => {
     let get_section_detail = ``;
-    get_section_detail += ` SELECT  section_detail_day,section_detail_start_time,section_detail_end_time,section_detail_room
-                            FROM wls_section_detail
-                            where section_id = ?`
+    get_section_detail += ` SELECT section_detail_id ,section_detail_day,
+    section_detail_start_time,section_detail_end_time,
+       section_detail_room , person.person_id , prefix.pf_name as prefix , pmsper.person_firstname_TH as name , pmsper.person_lastname_TH as lastname
+       FROM wls_section_detail AS detail
+       LEFT JOIN wls_section_person AS person
+       ON person.section_person_detail_id = detail.section_detail_id
+       LEFT JOIN pms_person AS pmsper
+       ON pmsper.person_id = person.person_id
+       LEFT JOIN pms_prefix AS prefix
+       ON pmsper.prefix = prefix.pf_id
+       where detail.section_id = ?`
     try {
         dbConnect.query(get_section_detail, [value], (err, results) => {
             if (err) {
@@ -514,6 +621,31 @@ const get_section_detail = (value, callback) => {
         });
     } catch (error) {
         callback(error);
+    }
+}
+
+const get_check_section_detail = (value, section_id, callback) => {
+    let sql_get_check_section_detail = ``;
+    sql_get_check_section_detail += `SELECT detail.section_detail_id
+    FROM wls_section_detail AS detail 
+    LEFT JOIN wls_section_person AS person
+    ON person.section_person_detail_id  = detail.section_detail_id 
+    WHERE person.person_id = ? AND detail.section_id = ? AND detail.section_detail_day = ?
+    AND detail.section_detail_start_time = ? AND detail.section_detail_end_time = ?
+    AND detail.section_detail_room = ?`
+
+    try {
+        dbConnect.query(sql_get_check_section_detail, [value.course_person, section_id,
+        value.section_date, value.section_start, value.section_end, value.section_room], (err, results) => {
+            if (err) {
+                console.log(err);
+                throw err;
+            } else {
+                callback(results)
+            }
+        });
+    } catch (error) {
+        callback(error)
     }
 }
 

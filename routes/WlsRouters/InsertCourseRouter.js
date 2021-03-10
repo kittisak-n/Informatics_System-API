@@ -25,3 +25,5 @@ router.post("/changestatus", insertcourse.change_status_section);
 router.post("/getsubject", insertcourse.get_subject_by_person_id);
 router.post("/getsubjectunit", insertcourse.get_subject_unit_by_person_id);
 router.post("/editpersonsection", insertcourse.edit_person_section);
+router.post("/getsectiondetailid", insertcourse.get_section_detail_by_id);
+router.post("/editsectiondetail", insertcourse.edit_section_detail);
