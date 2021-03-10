@@ -1146,3 +1146,59 @@ exports.updatePosition = (req, res) => {
         });
     }
 }
+
+exports.checkPerson = (req, res) => {
+    let sql_checkPerson = '';
+    sql_checkPerson += 'select person_id person_username \n';
+    sql_checkPerson += 'from pms_person \n';
+    sql_checkPerson += 'where person_username =  ? \n ';
+    try {
+        dbConnect.query(sql_checkPerson, [req.body.person_username + "@buu.ac.th"], (err, results) => {
+            if (err) {
+                console.log(err);
+                res.json({
+                    status: false,
+                    message: 'checkPerson fail',
+                    results: err
+                });
+            }
+            else {
+                if (results.length == 0) {
+                    res.json({
+                        status: false,
+                        message: 'checkPerson have data',
+                        results: results
+                    });
+                } else {
+                    res.json({
+                        status: true,
+                        message: 'checkPerson success',
+                        results: results
+                    });
+                }
+
+            }
+            // if (err) {
+            //     console.log(err);
+            //     res.json({
+            //         status: false,
+            //         message: 'checkPerson fail',
+            //         results: err
+            //     });
+            // }else if (results != person_username) {
+            //     console.log(err);
+            //     res.json({
+            //         status: false,
+            //         message: 'checkPerson fail',
+            //         results: err
+            //     });
+            // }
+        });
+    } catch (err) {
+        res.json({
+            status: false,
+            message: 'checkPerson fail',
+            results: err
+        });
+    }
+}

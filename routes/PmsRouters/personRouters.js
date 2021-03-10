@@ -46,5 +46,6 @@ router.post("/getPositionId", personController.getPositionId);
 router.post("/getPositionName", personController.getPositionName);
 router.post("/getPostionAccessById", personController.getPostionAccessById);
 router.post("/updatePosition", personController.updatePosition);
+router.post("/checkPerson", personController.checkPerson);
 
 module.exports = router;
