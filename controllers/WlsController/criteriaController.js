@@ -48,7 +48,7 @@ exports.Add_schedule = (req, res) => {
   }
 },
   // เพิ่ม Add_schedule_detail
-  (exports.Add_schedule_detail = (req, res) => {
+  exports.Add_schedule_detail = (req, res) => {
     let sql_add_schedule_detail =
       "INSERT INTO wls_schedule_detail(schedule_id,schedule_detail_type,schedule_detail_subject,schedule_detail_bachelor,schedule_detail_graduate,schedule_detail_create_by,schedule_detail_create_date,schedule_detail_update_by,schedule_detail_update_date) ";
     sql_add_schedule_detail += "VALUES (?,?,?,?,?,?,?,?,?)";
@@ -93,7 +93,7 @@ exports.Add_schedule = (req, res) => {
         results: err,
       });
     }
-  });
+  };
 
 // เพิ่ม Add_schedule_condition
 exports.Add_schedule_condition = (req, res) => {
@@ -139,7 +139,7 @@ exports.Add_schedule_condition = (req, res) => {
 // ดึงข้อมูล schedule ทั้งหมด
 exports.Get_all_schedule = (req, res) => {
   let sql_get_schedule =
-    "SELECT * FROM wls_schedule ORDER BY schedule_status DESC ";
+    "SELECT schedule_id,SUBSTRING(schedule_start_date,1,10) AS schedule_start_date,schedule_name,schedule_general_min,schedule_general_max,schedule_per_credit,schedule_status,schedule_create_by,schedule_create_date  FROM wls_schedule ORDER BY schedule_status DESC ";
 
   let array = {
     schedule: [],
