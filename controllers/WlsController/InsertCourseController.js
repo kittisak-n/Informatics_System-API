@@ -39,7 +39,8 @@ exports.get_section_detail_by_id = (req, res) => {
     sql_get_section_detail_by_id = `SELECT detail.section_detail_id , detail.section_detail_day ,
     detail.section_detail_start_time , detail.section_detail_end_time ,detail.section_detail_room
     FROM wls_section_detail AS detail 
-    WHERE detail.section_detail_id = ?`
+    WHERE detail.section_detail_id = ?
+    `
 
     try {
         dbConnect.query(sql_get_section_detail_by_id, [req.body.section_detail_id], (err, results) => {
@@ -601,7 +602,8 @@ const get_section_detail = (value, callback) => {
     let get_section_detail = ``;
     get_section_detail += ` SELECT section_detail_id ,section_detail_day,
     section_detail_start_time,section_detail_end_time,
-       section_detail_room , person.person_id , prefix.pf_name as prefix , pmsper.person_firstname_TH as name , pmsper.person_lastname_TH as lastname
+       section_detail_room , person.person_id , prefix.pf_name as prefix , 
+       pmsper.person_firstname_TH as name , pmsper.person_lastname_TH as lastname
        FROM wls_section_detail AS detail
        LEFT JOIN wls_section_person AS person
        ON person.section_person_detail_id = detail.section_detail_id
@@ -609,7 +611,8 @@ const get_section_detail = (value, callback) => {
        ON pmsper.person_id = person.person_id
        LEFT JOIN pms_prefix AS prefix
        ON pmsper.prefix = prefix.pf_id
-       where detail.section_id = ?`
+       where detail.section_id = ?
+       GROUP BY detail.section_detail_id`
     try {
         dbConnect.query(get_section_detail, [value], (err, results) => {
             if (err) {
