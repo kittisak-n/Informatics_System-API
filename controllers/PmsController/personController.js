@@ -1116,7 +1116,7 @@ exports.getPostionAccessById = (req, res) => {
     }
 }
 
-exports.updatePosition = (req, res) => {
+exports.updatePermission = (req, res) => {
     let sql_update_position = '';
     sql_update_position += 'update pms_prepair '
     sql_update_position += 'set position_access_id = ? , prepair_update_by = CURRENT_TIMESTAMP() '
