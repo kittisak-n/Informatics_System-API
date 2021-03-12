@@ -47,7 +47,7 @@ exports.Add_schedule = (req, res) => {
     });
   }
 },
-  // เพิ่ม Add_schedule_detail
+  // เพิ่ม Add_schedule_detail .
   exports.Add_schedule_detail = (req, res) => {
     let sql_add_schedule_detail =
       "INSERT INTO wls_schedule_detail(schedule_id,schedule_detail_type,schedule_detail_subject,schedule_detail_bachelor,schedule_detail_graduate,schedule_detail_create_by,schedule_detail_create_date,schedule_detail_update_by,schedule_detail_update_date) ";
