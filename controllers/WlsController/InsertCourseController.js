@@ -290,7 +290,7 @@ exports.InsertCourseExcel = (req, res) => {
     }
 }
 
-// Call start All Function ----------------------------------------------------------------------------------------------------------------------------------
+// --------------- Call start All Function  --------------- //
 const getCourseId = (value, callback) => {
     console.log(value);
     //Check Course ซ้ำ ก่อน Insert
@@ -460,7 +460,7 @@ const InsertSection = (ele, course_id, section_term, section_year, callback) => 
     }
 }
 async function InsertSectionDetail(ele, section_id, callback) {
-
+    
     //Insert Section Detail
     let sql_insert_section_detail = "";
     sql_insert_section_detail += `INSERT INTO wls_section_detail(section_id, 
@@ -644,4 +644,4 @@ const get_check_section_detail = (value, section_id, callback) => {
         callback(error)
     }
 }
-
+// --------------- End Call All Function  --------------- //
