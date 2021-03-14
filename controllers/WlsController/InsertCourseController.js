@@ -63,7 +63,6 @@ exports.get_section_detail_by_id = (req, res) => {
         return error
     }
 }
-
 exports.edit_person_section = (req, res) => {
     let sql_edit_person_section = ""
     sql_edit_person_section = `UPDATE wls_section_person as person
@@ -377,8 +376,6 @@ const getSectionId = (value, course, term, year, callback) => {
         callback(error)
     }
 }
-
-
 const InsertCourse = (ele, callback) => {
     //Insert Course
     let sql_insert_course = "";
@@ -421,7 +418,6 @@ const InsertCourse = (ele, callback) => {
     }
 
 }
-
 const InsertSection = (ele, course_id, section_term, section_year, callback) => {
 
     //Insert Section
@@ -463,7 +459,6 @@ const InsertSection = (ele, course_id, section_term, section_year, callback) => 
         callback(error);
     }
 }
-
 async function InsertSectionDetail(ele, section_id, callback) {
 
     //Insert Section Detail
@@ -502,7 +497,6 @@ async function InsertSectionDetail(ele, section_id, callback) {
     }
 
 }
-
 async function InsertSectionPserson(ele, section_id, detail_id, callback) {
 
     //Insert Section Person
@@ -626,7 +620,6 @@ const get_section_detail = (value, callback) => {
         callback(error);
     }
 }
-
 const get_check_section_detail = (value, section_id, callback) => {
     let sql_get_check_section_detail = ``;
     sql_get_check_section_detail += `SELECT detail.section_detail_id
