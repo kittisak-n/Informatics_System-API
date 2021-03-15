@@ -23,4 +23,5 @@ router.post("/get_summary_detail_by_summary_id", summary.get_summary_detail_by_s
 
 router.post("/get_summary_by_person_id", summary.get_summary_by_person_id);
 
+router.post("/get_summary_by_year", summary.get_summary_by_year);
 
