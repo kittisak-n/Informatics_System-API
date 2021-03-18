@@ -4,8 +4,8 @@ const AD = require('activedirectory2').promiseWrapper;
 
 exports.getAllPositionAccess = (req, res) => {
     let sql_getAll_PositionAccess = '';
-    sql_getAll_PositionAccess = 'select ppa.postion_access_id, ppa.postion_access_name_TH '
-    sql_getAll_PositionAccess = 'from pms_postion_access ppa'
+    sql_getAll_PositionAccess = 'select ppa.position_access_id, ppa.position_access_name_TH '
+    sql_getAll_PositionAccess = 'from pms_position_access ppa'
 
     try {
         dbConnect.query(sql_getAll_PositionAccess, (err, results) => {
@@ -35,12 +35,12 @@ exports.getAllPositionAccess = (req, res) => {
 
 exports.getByIdPositionAccess = (req, res) => {
     let sql_getById_PositionAccess = '';
-    sql_getById_PositionAccess += 'select ppa.postion_access_id, ppa.postion_access_name_TH '
-    sql_getById_PositionAccess += 'from pms_postion_access ppa'
-    sql_getById_PositionAccess += 'where ppa.postion_access_id = ?'
+    sql_getById_PositionAccess += 'select ppa.position_access_id, ppa.position_access_name_TH '
+    sql_getById_PositionAccess += 'from pms_position_access ppa'
+    sql_getById_PositionAccess += 'where ppa.position_access_id = ?'
 
     try {
-        dbConnect.query(sql_getById_PositionAccess, [req.body.postion_access_id], (err, results) => {
+        dbConnect.query(sql_getById_PositionAccess, [req.body.position_access_id], (err, results) => {
             if (err) {
                 console.log(err);
                 res.json({
@@ -68,7 +68,7 @@ exports.getByIdPositionAccess = (req, res) => {
 exports.insertPositionAccess = (req, res) => {
     console.log(req.body)
     let sql_insert_PositionAccess = ''
-    sql_insert_PositionAccess += 'insert into pms_postion_access(postion_access_name_TH, postion_access_create_by, postion_access_create_date, postion_access_update_by, postion_access_update_date) \n';
+    sql_insert_PositionAccess += 'insert into pms_position_access(position_access_name_TH, position_access_create_by, position_access_create_date, position_access_update_by, position_access_update_date) \n';
     sql_insert_PositionAccess += 'values(?, ?, CURRENT_TIMESTAMP(), ?, CURRENT_TIMESTAMP())';
 
     let sql_insert_access = '';
@@ -112,12 +112,12 @@ exports.insertPositionAccess = (req, res) => {
 exports.updatePositionAccess = (req, res) => {
 
     let sql_update_PositionAccess = '';
-    sql_update_PositionAccess = 'update pms_postion_access';
-    sql_update_PositionAccess = 'set postion_access_name_TH = ?, postion_access_name_EN = ?, postion_access_update_by = ?, postion_access_update_date = CURRENT_TIMESTAMP()'
-    sql_update_PositionAccess = 'where postion_access_id = ?'
+    sql_update_PositionAccess = 'update pms_position_access';
+    sql_update_PositionAccess = 'set position_access_name_TH = ?, position_access_name_EN = ?, position_access_update_by = ?, position_access_update_date = CURRENT_TIMESTAMP()'
+    sql_update_PositionAccess = 'where position_access_id = ?'
 
     try {
-        dbConnect.query(sql_update_PositionAccess, [req.body.postion_access_name_TH, req.body.postion_access_name_EN, req.body.postion_access_update_by, req.body.postion_access_id], (err, results) => {
+        dbConnect.query(sql_update_PositionAccess, [req.body.position_access_name_TH, req.body.position_access_name_EN, req.body.position_access_update_by, req.body.position_access_id], (err, results) => {
             if (err) {
                 console.log(err);
                 res.json({
@@ -145,10 +145,10 @@ exports.updatePositionAccess = (req, res) => {
 exports.deletePositionAccess = (req, res) => {
 
     let sql_delete_PositionAccess = '';
-    sql_delete_PositionAccess = 'delete from pms_postion_access where postion_access_id = ?;'
+    sql_delete_PositionAccess = 'delete from pms_position_access where position_access_id = ?;'
 
     try {
-        dbConnect.query(sql_delete_PositionAccess, [req.body.postion_access_id], (err, results) => {
+        dbConnect.query(sql_delete_PositionAccess, [req.body.position_access_id], (err, results) => {
             if (err) {
                 console.log(err);
                 res.json({

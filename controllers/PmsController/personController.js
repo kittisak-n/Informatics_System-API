@@ -277,9 +277,9 @@ exports.searcLdaphPerson = (req, res) => {
 
 exports.getAllPerson = (req, res) => {
     let sql_getAll_person = '';
-    sql_getAll_person += 'select person_id,person_username,pf_name_abbr,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,person_province,person_amphur,person_district,postition_name,person_status \n';
+    sql_getAll_person += 'select person_id,person_username,pf_name_abbr,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,person_province,person_amphur,person_district,position_name,person_status \n';
     sql_getAll_person += 'from pms_person \n';
-    sql_getAll_person += 'left join pms_postion on pms_postion.postion_id = pms_person.person_position\n';
+    sql_getAll_person += 'left join pms_position on pms_position.position_id = pms_person.person_position \n';
     sql_getAll_person += 'left join pms_prefix on pms_prefix.pf_id = pms_person.prefix_id \n';
     sql_getAll_person += 'where person_id != 1';
     // sql_getAll_person += 'where person_status = 1 \n';
@@ -291,8 +291,8 @@ exports.getAllPerson = (req, res) => {
     // sql_getPosition_person += 'from pms_person \n';
     // sql_getPosition_person += 'where person_id != 1';
 
-    //     SELECT postition_name FROM `pms_postion` 
-    // LEFT JOIN pms_person ON pms_person.person_position = pms_postion.postion_id
+    //     SELECT postition_name FROM `pms_position` 
+    // LEFT JOIN pms_person ON pms_person.person_position = pms_position.position_id
     // WHERE pms_person.person_id = 2
 
 
@@ -325,9 +325,9 @@ exports.getAllPerson = (req, res) => {
 
 exports.getByIdPerson = (req, res) => {
     let sql_getById_person = '';
-    sql_getById_person += 'select person_id,person_username,pf_name_abbr,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,ifs_provinces.name_th as province,ifs_amphures.name_th as amphures,ifs_districts.name_th as districts,ifs_districts.zip_code as zipcode,postition_name,person_status,prefix_id,person_province,person_amphur,person_district,person_position \n';
+    sql_getById_person += 'select person_id,person_username,pf_name_abbr,person_firstname_TH,person_lastname_TH,person_firstname_EN,person_lastname_EN,person_address,ifs_provinces.name_th as province,ifs_amphures.name_th as amphures,ifs_districts.name_th as districts,ifs_districts.zip_code as zipcode,position_name,person_status,prefix_id,person_province,person_amphur,person_district,person_position \n';
     sql_getById_person += 'from pms_person \n';
-    sql_getById_person += 'left join pms_postion on pms_postion.postion_id = pms_person.person_position\n';
+    sql_getById_person += 'left join pms_position on pms_position.position_id = pms_person.person_position\n';
     sql_getById_person += 'left join pms_prefix on pms_prefix.pf_id = pms_person.prefix_id \n';
     sql_getById_person += 'left join ifs_districts on ifs_districts.id = pms_person.person_district \n';
     sql_getById_person += 'left join ifs_amphures on ifs_amphures.id = pms_person.person_amphur \n';
@@ -709,8 +709,8 @@ exports.getProvinces = (req, res) => {
 
 exports.getPosition = (req, res) => {
     let sql_getPosition_person = '';
-    sql_getPosition_person += 'select postion_id, postition_name\n';
-    sql_getPosition_person += 'from pms_postion \n';
+    sql_getPosition_person += 'select position_id, position_name\n';
+    sql_getPosition_person += 'from pms_position \n';
 
     try {
         dbConnect.query(sql_getPosition_person, (err, results) => {
@@ -738,24 +738,24 @@ exports.getPosition = (req, res) => {
     }
 }
 
-exports.getPostionAccess = (req, res) => {
-    let sql_getPostionAccess = '';
-    sql_getPostionAccess += 'select postion_access_id, postion_access_name_TH\n';
-    sql_getPostionAccess += 'from pms_postion_access \n';
+exports.getpositionAccess = (req, res) => {
+    let sql_getpositionAccess = '';
+    sql_getpositionAccess += 'select position_access_id, position_access_name_TH\n';
+    sql_getpositionAccess += 'from pms_position_access \n';
 
     try {
-        dbConnect.query(sql_getPostionAccess, (err, results) => {
+        dbConnect.query(sql_getpositionAccess, (err, results) => {
             if (err) {
                 console.log(err);
                 res.json({
                     status: false,
-                    message: 'getAll Postion access fail',
+                    message: 'getAll position access fail',
                     results: err
                 });
             } else {
                 res.json({
                     status: true,
-                    message: 'getAll Postion access success',
+                    message: 'getAll position access success',
                     results: results
                 });
             }
@@ -763,7 +763,7 @@ exports.getPostionAccess = (req, res) => {
     } catch (err) {
         res.json({
             status: false,
-            message: 'getAll Postion_access fail',
+            message: 'getAll position_access fail',
             results: err
         });
     }
@@ -905,12 +905,12 @@ exports.getPrefixId = (req, res) => {
 
 exports.getPositionId = (req, res) => {
     let sql_getPosition_Id = '';
-    sql_getPosition_Id += 'select postion_id, postition_name \n';
-    sql_getPosition_Id += 'from pms_postion \n';
-    sql_getPosition_Id += 'where postion_id = ? \n ';
+    sql_getPosition_Id += 'select position_id, position_name \n';
+    sql_getPosition_Id += 'from pms_position \n';
+    sql_getPosition_Id += 'where position_id = ? \n ';
 
     try {
-        dbConnect.query(sql_getPosition_Id, [req.body.postion_id], (err, results) => {
+        dbConnect.query(sql_getPosition_Id, [req.body.position_id], (err, results) => {
             if (err) {
                 console.log(err);
                 res.json({
@@ -1082,27 +1082,27 @@ const getsubPositionName = (value, callback) => {
     }
 }
 
-exports.getPostionAccessById = (req, res) => {
-    let sql_getPostionAcces_Id = '';
-    sql_getPostionAcces_Id += 'select postion_access_id, postion_access_name_TH ,pms_person.person_id as person_id,pms_prepair.prepair_status as prepair_status\n';
-    sql_getPostionAcces_Id += 'from pms_prepair \n';
-    sql_getPostionAcces_Id += 'left join pms_postion_access on pms_postion_access.postion_access_id = pms_prepair.position_access_id \n';
-    sql_getPostionAcces_Id += 'left join pms_person on pms_person.person_id = pms_prepair.person_id \n';
-    sql_getPostionAcces_Id += 'where pms_person.person_id =  ? \n ';
+exports.getpositionAccessById = (req, res) => {
+    let sql_getpositionAcces_Id = '';
+    sql_getpositionAcces_Id += 'select pms_position_access.position_access_id, position_access_name_TH ,pms_person.person_id as person_id,pms_prepair.prepair_status as prepair_status\n';
+    sql_getpositionAcces_Id += 'from pms_prepair \n';
+    sql_getpositionAcces_Id += 'left join pms_position_access on pms_position_access.position_access_id = pms_prepair.position_access_id \n';
+    sql_getpositionAcces_Id += 'left join pms_person on pms_person.person_id = pms_prepair.person_id \n';
+    sql_getpositionAcces_Id += 'where pms_person.person_id =  ? \n ';
 
     try {
-        dbConnect.query(sql_getPostionAcces_Id, [req.body.person_id], (err, results) => {
+        dbConnect.query(sql_getpositionAcces_Id, [req.body.person_id], (err, results) => {
             if (err) {
                 console.log(err);
                 res.json({
                     status: false,
-                    message: 'get PostionAccessId fail',
+                    message: 'get positionAccessId fail',
                     results: err
                 });
             } else {
                 res.json({
                     status: true,
-                    message: 'get PostionAccessId success',
+                    message: 'get positionAccessId success',
                     results: results
                 });
             }
@@ -1110,13 +1110,13 @@ exports.getPostionAccessById = (req, res) => {
     } catch (err) {
         res.json({
             status: false,
-            message: 'get PostionAccessId fail',
+            message: 'get positionAccessId fail',
             results: err
         });
     }
 }
 
-exports.updatePosition = (req, res) => {
+exports.updatePermission = (req, res) => {
     let sql_update_position = '';
     sql_update_position += 'update pms_prepair '
     sql_update_position += 'set position_access_id = ? , prepair_update_by = CURRENT_TIMESTAMP() '
