@@ -18,8 +18,8 @@ router.use(bodyParser.json());
 
 
 router.post("/Get_person_by_id", summary.Get_person_by_id);
-router.post("/get_summary", summary.get_summary);
-router.post("/get_summary_detail_by_summary_id", summary.get_summary_detail_by_summary_id);
-router.post("/get_summary_by_person_id", summary.get_summary_by_person_id);
-router.post("/get_summary_by_year", summary.get_summary_by_year);
+router.post("/get_summary", summary.Get_person_by_id);
+
+
+
 
