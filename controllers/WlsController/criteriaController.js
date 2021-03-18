@@ -133,7 +133,7 @@ exports.Add_schedule_condition = (req, res) => {
       status: false,
       message: "Fail Add_schedule_condition",
       results: err,
-    });
+  });
   }
 };
 // ดึงข้อมูล schedule ทั้งหมด
@@ -363,7 +363,7 @@ exports.Update_status_schedule = (req, res) => {
   try {
     dbConnect.query(
       sql_update_status_schedule
-      ,
+     ,
       (err, results) => {
         if (err) {
           res.json({
