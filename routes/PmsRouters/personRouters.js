@@ -44,7 +44,7 @@ router.post("/getDistrictId", personController.getDistrictId);
 router.post("/getPrefixId", personController.getPrefixId);
 router.post("/getPositionId", personController.getPositionId);
 router.post("/getPositionName", personController.getPositionName);
-router.post("/getpositionAccessById", personController.getpositionAccessById);
+router.post("/getPostionAccessById", personController.getPostionAccessById);
 router.post("/updatePermission", personController.updatePermission);
 router.post("/checkPerson", personController.checkPerson);
 
