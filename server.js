@@ -10,7 +10,6 @@ const unitRouters = require('./routes/MdsRouters/unitRouters');
 const typeRouters = require('./routes/MdsRouters/typeRouters')
 const adjustRouters = require('./routes/MdsRouters/adjustRouters');
 const RequisitionOrderRouters = require('./routes/MdsRouters/RequisitionOrderRouters');
-// const MpsRouters = require('./routes/MpsRouters/user');
 const WlsRouters = require('./routes/WlsRouters/criteria');
 const WlsInsert = require('./routes/WlsRouters/InsertCourseRouter');
 const summaryRouters = require('./routes/WlsRouters/summary');
@@ -38,7 +37,6 @@ app.use('/unitRouters', unitRouters);
 app.use('/typeRouters', typeRouters);
 app.use('/adjustRouters', adjustRouters);
 app.use('/RequisitionOrderRouters', RequisitionOrderRouters);
-// app.use('/MpsRouters', MpsRouters);
 app.use('/WlsRouters', WlsRouters);
 app.use('/summaryRouters', summaryRouters);
 app.use('/WlsInsert', WlsInsert);

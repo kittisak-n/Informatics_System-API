@@ -26,3 +26,4 @@ router.post("/get_summary_by_person_id", summary.get_summary_by_person_id);
 router.post("/get_summary_by_year", summary.get_summary_by_year);
 
 router.post("/get_summary_of_report", summary.get_summary_of_report);
+router.post("/get_summary_of_report", summary.get_summary_of_report);
