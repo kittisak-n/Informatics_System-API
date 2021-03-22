@@ -36,7 +36,7 @@ exports.Get_person_by_id = (req, res) => {
   exports.get_summary = (req, res) => {
     let sql_get_summary = "";
     sql_get_summary +=
-      "SELECT wls_summary.person_id,wls_schedule.schedule_per_credit,wls_schedule.schedule_start_date,wls_schedule.schedule_id,wls_schedule.schedule_name,wls_summary.summary_year,pms_position.position_name,wls_summary.summary_id,wls_summary.summary_total,wls_summary.summary_total_calculate,wls_summary.summary_total_around, wls_summary.summary_total_extra,wls_summary.summary_bonus,wls_summary.summary_salary,wls_summary.summary_lesson,wls_summary.summary_create_date,CONCAT(pms_prefix.pf_name,' ',pms_person.person_firstname_TH,' ',pms_person.person_lastname_TH) AS person_name,pms_person.person_address,ifs_provinces.name_th AS provinces_name,ifs_amphures.name_th AS amphures_name,ifs_districts.name_th AS districts_name,ifs_districts.zip_code\nFROM wls_summary\n";
+      "SELECT wls_summary.person_id,wls_schedule.schedule_per_credit,wls_schedule.schedule_start_date,wls_schedule.schedule_id,wls_schedule.schedule_name,wls_summary.summary_year,pms_position.position_name,wls_summary.summary_id,wls_summary.summary_total,wls_summary.summary_total_calculate,wls_summary.summary_total_around, wls_summary.summary_total_extra,wls_summary.summary_bonus,wls_summary.summary_salary,wls_summary.summary_lesson,wls_summary.summary_create_date,CONCAT(pms_prefix.pf_name,' ',pms_person.person_firstname_TH,' ',pms_person.person_lastname_TH) AS person_name,pms_person.person_address,ifs_provinces.name_th AS provinces_name,ifs_amphures.name_th AS amphures_name,ifs_districts.name_th AS districts_name,ifs_districts.zip_code,pms_person.person_zipcode\nFROM wls_summary\n";
     sql_get_summary +=
       "LEFT JOIN wls_schedule ON wls_summary.schedule_id = wls_schedule.schedule_id\n";
     sql_get_summary +=
@@ -94,7 +94,7 @@ exports.Get_person_by_id = (req, res) => {
   exports.get_summary_by_year = (req, res) => {
     let sql_get_summary_by_year = "";
     sql_get_summary_by_year +=
-      "SELECT pms_person.person_id,wls_schedule.schedule_per_credit,wls_schedule.schedule_start_date,wls_schedule.schedule_id,wls_schedule.schedule_name,wls_summary.summary_year,pms_position.position_name,wls_summary.summary_id,wls_summary.summary_total,wls_summary.summary_total_calculate,wls_summary.summary_total_around, wls_summary.summary_total_extra,wls_summary.summary_bonus,wls_summary.summary_salary,wls_summary.summary_lesson,wls_summary.summary_create_date,CONCAT(pms_prefix.pf_name,' ',pms_person.person_firstname_TH,' ',pms_person.person_lastname_TH) AS person_name,pms_person.person_address,ifs_provinces.name_th AS provinces_name,ifs_amphures.name_th AS amphures_name,ifs_districts.name_th AS districts_name,ifs_districts.zip_code\nFROM wls_summary\n";
+      "SELECT wls_summary.summary_term,pms_person.person_id,wls_schedule.schedule_per_credit,wls_schedule.schedule_start_date,wls_schedule.schedule_id,wls_schedule.schedule_name,wls_summary.summary_year,pms_position.position_name,wls_summary.summary_id,wls_summary.summary_total,wls_summary.summary_total_calculate,wls_summary.summary_total_around, wls_summary.summary_total_extra,wls_summary.summary_bonus,wls_summary.summary_salary,wls_summary.summary_lesson,wls_summary.summary_create_date,CONCAT(pms_prefix.pf_name,' ',pms_person.person_firstname_TH,' ',pms_person.person_lastname_TH) AS person_name,pms_person.person_address,ifs_provinces.name_th AS provinces_name,ifs_amphures.name_th AS amphures_name,ifs_districts.name_th AS districts_name,ifs_districts.zip_code,pms_person.person_zipcode\nFROM wls_summary\n";
     sql_get_summary_by_year +=
       "LEFT JOIN wls_schedule ON wls_summary.schedule_id = wls_schedule.schedule_id\n";
     sql_get_summary_by_year +=
@@ -109,7 +109,7 @@ exports.Get_person_by_id = (req, res) => {
       "LEFT JOIN ifs_amphures ON pms_person.person_amphur = ifs_amphures.id\n";
     sql_get_summary_by_year +=
       "LEFT JOIN ifs_districts ON pms_person.person_district = ifs_districts.id\n";
-    sql_get_summary_by_year += "WHERE wls_summary.summary_year = ? \n";
+    sql_get_summary_by_year += "WHERE wls_summary.summary_year = ? AND wls_summary.summary_term = ?\n";
 
     sql_get_summary_by_year += "GROUP BY wls_summary.person_id\n";
     sql_get_summary_by_year += "ORDER BY wls_summary.summary_create_date DESC";
@@ -127,7 +127,7 @@ exports.Get_person_by_id = (req, res) => {
     try {
       dbConnect.query(
         sql_get_summary_by_year,
-        [req.body.summary_year],
+        [req.body.summary_year,req.body.summary_term],
         (err, results) => {
           if (err) {
             res.json({
@@ -203,7 +203,7 @@ exports.get_summary_detail_by_summary_id = (req, res) => {
 exports.get_summary_by_person_id = (req, res) => {
   let sql_get_summary_by_person_id = "";
   sql_get_summary_by_person_id +=
-    "SELECT wls_schedule.schedule_per_credit,wls_schedule.schedule_start_date,wls_schedule.schedule_id,wls_schedule.schedule_name,wls_summary.summary_year,pms_position.position_name,wls_summary.summary_id,wls_summary.summary_total,wls_summary.summary_total_calculate,wls_summary.summary_total_around, wls_summary.summary_total_extra,wls_summary.summary_bonus,wls_summary.summary_salary,wls_summary.summary_lesson,wls_summary.summary_create_date,CONCAT(pms_prefix.pf_name,' ',pms_person.person_firstname_TH,' ',pms_person.person_lastname_TH) AS person_name,pms_person.person_address,ifs_provinces.name_th AS provinces_name,ifs_amphures.name_th AS amphures_name,ifs_districts.name_th AS districts_name,ifs_districts.zip_code\nFROM wls_summary\n";
+    "SELECT wls_schedule.schedule_per_credit,wls_schedule.schedule_start_date,wls_schedule.schedule_id,wls_schedule.schedule_name,wls_summary.summary_year,pms_position.position_name,wls_summary.summary_id,wls_summary.summary_total,wls_summary.summary_total_calculate,wls_summary.summary_total_around, wls_summary.summary_total_extra,wls_summary.summary_bonus,wls_summary.summary_salary,wls_summary.summary_lesson,wls_summary.summary_create_date,CONCAT(pms_prefix.pf_name,' ',pms_person.person_firstname_TH,' ',pms_person.person_lastname_TH) AS person_name,pms_person.person_address,ifs_provinces.name_th AS provinces_name,ifs_amphures.name_th AS amphures_name,ifs_districts.name_th AS districts_name,ifs_districts.zip_code,pms_person.person_zipcode\nFROM wls_summary\n";
   sql_get_summary_by_person_id +=
     "LEFT JOIN wls_schedule ON wls_summary.schedule_id = wls_schedule.schedule_id\n";
   sql_get_summary_by_person_id +=
