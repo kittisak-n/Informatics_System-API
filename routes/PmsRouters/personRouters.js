@@ -27,7 +27,7 @@ router.post("/getProvinces", personController.getProvinces);
 
 router.post("/getPosition", personController.getPosition);
 router.post("/getByIdPerson", personController.getByIdPerson);
-router.post("/getPostionAccess", personController.getPostionAccess);
+router.post("/getpositionAccess", personController.getpositionAccess);
 router.post("/getSystemByIdPerson", personController.getSystemByIdPerson);
 
 router.post("/insertPerson", personController.insertPerson);
@@ -44,8 +44,8 @@ router.post("/getDistrictId", personController.getDistrictId);
 router.post("/getPrefixId", personController.getPrefixId);
 router.post("/getPositionId", personController.getPositionId);
 router.post("/getPositionName", personController.getPositionName);
-router.post("/getPostionAccessById", personController.getPostionAccessById);
-router.post("/updatePosition", personController.updatePosition);
+router.post("/getpositionAccessById", personController.getpositionAccessById);
+router.post("/updatePermission", personController.updatePermission);
 router.post("/checkPerson", personController.checkPerson);
 
 module.exports = router;

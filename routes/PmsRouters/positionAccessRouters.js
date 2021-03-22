@@ -3,7 +3,7 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const router = express.Router();
 
-const postionaccessController = require('../../controllers/PmsController/postionaccessController');
+const positionaccessController = require('../../controllers/PmsController/positionaccessController');
 
 router.use(session({
     secret: 'secret',
@@ -17,9 +17,9 @@ router.use(bodyParser.urlencoded({
 router.use(bodyParser.json());
 
 // /* test get username password by ID */
-router.post("/insertPositionAccess", postionaccessController.insertPositionAccess);
-router.post("/getAllPositionAccess", postionaccessController.getAllPositionAccess);
-router.post("/getByIdPositionAccess", postionaccessController.getByIdPositionAccess);
+router.post("/insertPositionAccess", positionaccessController.insertPositionAccess);
+router.post("/getAllPositionAccess", positionaccessController.getAllPositionAccess);
+router.post("/getByIdPositionAccess", positionaccessController.getByIdPositionAccess);
 
 
 
