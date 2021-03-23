@@ -18,6 +18,6 @@ router.use(bodyParser.json());
 /* test get username password by ID */
 router.post("/getAllUnit", unitController.getAllUnit);
 router.post("/insertUnit", unitController.insertUnit);
-
+router.post("/updateUnit", unitController.updateUnit);
 
 module.exports = router;

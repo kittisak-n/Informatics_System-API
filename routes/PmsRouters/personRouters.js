@@ -27,7 +27,7 @@ router.post("/getProvinces", personController.getProvinces);
 
 router.post("/getPosition", personController.getPosition);
 router.post("/getByIdPerson", personController.getByIdPerson);
-router.post("/getpositionAccess", personController.getpositionAccess);
+router.post("/getAllPositionAccess", personController.getAllPositionAccess);
 router.post("/getSystemByIdPerson", personController.getSystemByIdPerson);
 
 router.post("/insertPerson", personController.insertPerson);
@@ -44,7 +44,7 @@ router.post("/getDistrictId", personController.getDistrictId);
 router.post("/getPrefixId", personController.getPrefixId);
 router.post("/getPositionId", personController.getPositionId);
 router.post("/getPositionName", personController.getPositionName);
-router.post("/getpositionAccessById", personController.getpositionAccessById);
+router.post("/getPositionAccessById", personController.getPositionAccessById);
 router.post("/updatePermission", personController.updatePermission);
 router.post("/checkPerson", personController.checkPerson);
 

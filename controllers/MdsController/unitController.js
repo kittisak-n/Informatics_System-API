@@ -3,12 +3,14 @@ const AD = require('activedirectory2').promiseWrapper;
 
 
 exports.getAllUnit = (req, res) => {
-    let sql_getAll_unit = "SELECT * FROM mds_unit"
+    let sql_getAllUnit = "SELECT * FROM mds_unit"
     try {
-        dbConnect.query(sql_getAll_unit, [], (err, results) => {
+        dbConnect.query(sql_getAllUnit, [], (err, results) => {
             if (err) {
                 console.log(err)
             } else {
+                
+             
                 res.json({
                     status: true,
                     massage: 'get all unit success',
@@ -41,7 +43,23 @@ exports.insertUnit = (req, res) => {
 }
 
 exports.updateUnit = (req, res) => {
+    let sql_updateUnit = "UPDATE mds_unit SET unit_name=? WHERE unit_id = ?";
 
+    try {
+      dbConnect.query(sql_updateUnit, [req.body.unit_name,req.body.unit_id], (err, results) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.json({
+            status: true,
+            massage: "updateUnit success",
+            results: results,
+          });
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
 }
 
 exports.deleteUnit = (req, res) => {

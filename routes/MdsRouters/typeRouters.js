@@ -16,7 +16,8 @@ router.use(bodyParser.urlencoded({
 router.use(bodyParser.json());
 
 /* test get username password by ID */
-router.post("/getAlltype", typeController.getAllTpye);
-router.post("/insertTpye", typeController.insertTpye);
+router.post("/getAlltype", typeController.getAllType);
+router.post("/insertType", typeController.insertType);
+router.post("/updateType", typeController.updateType);
 
 module.exports = router;
